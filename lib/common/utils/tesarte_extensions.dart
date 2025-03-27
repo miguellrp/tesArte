@@ -1,9 +1,9 @@
 extension ValidationEmptyValue on String? {
-  bool isEmptyOrNull() {
+  bool get isEmptyOrNull {
     return this == "" || this == null;
   }
 
-  bool isNotEmptyAndNotNull() {
+  bool get isNotEmptyAndNotNull {
     return this != "" && this != null;
   }
 }

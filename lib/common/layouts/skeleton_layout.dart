@@ -13,9 +13,9 @@ class SkeletonLayout extends StatefulWidget {
 }
 
 class _SkeletonLayoutState extends State<SkeletonLayout> {
-  Container gettesArteDevOptions() {
+  Container getTesArteDevTools() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 5),
       width: 350,
       height: 50,
       color: Theme.of(context).colorScheme.primary.withAlpha(150),
@@ -41,8 +41,15 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
       body: Column(
         children: [
           TesArteTitleBar(),
-          Expanded(child: widget.content),
-          if (AppConfig.developmentMode) gettesArteDevOptions()
+          Expanded(child:
+            Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                widget.content,
+                if (AppConfig.developmentMode) Positioned(bottom: 0, child: getTesArteDevTools())
+              ],
+            )
+          ),
         ],
       ),
     );

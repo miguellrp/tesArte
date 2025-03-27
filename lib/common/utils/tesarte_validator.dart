@@ -1,4 +1,4 @@
-import 'package:tesArte/common/utils/TesArte_extensions.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 
 enum TesArteValidatorType {
   name,
@@ -16,6 +16,6 @@ abstract class TesArteValidator {
   /* --- PRIVATE VALIDATORS FUNCTIONS --- */
   static String? _validateName(String? name) {
     // TODO: lang
-    return name.isEmptyOrNull() ? "O nome non pode quedar baleiro" : null; // TODO: lang
+    return name.isEmptyOrNull ? "O nome non pode quedar baleiro" : null; // TODO: lang
   }
 }

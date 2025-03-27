@@ -68,7 +68,7 @@ class TesArteTextFormField extends StatelessWidget {
           labelStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
             color: Theme.of(context).colorScheme.onPrimary.withAlpha(200),
           ),
-          hintText: hintText.isNotEmptyAndNotNull() ? hintText : null,
+          hintText: hintText.isNotEmptyAndNotNull ? hintText : null,
           hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
             color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
             fontStyle: FontStyle.italic

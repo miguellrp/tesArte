@@ -6,6 +6,6 @@ class UtilViewport {
   }
 
   static bool isNarrowScreen(BuildContext context) {
-    return MediaQuery.sizeOf(context).width <= 350;
+    return MediaQuery.sizeOf(context).width <= 1280;
   }
 }

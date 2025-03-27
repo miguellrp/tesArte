@@ -4,9 +4,11 @@ import 'package:tesArte/common/components/tesarte_loader/tesArte_loader.dart';
 import 'package:tesArte/common/components/tesarte_toast.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
 import 'package:tesArte/common/components/tesarte_text_icon_button.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
+import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 import 'package:tesArte/models/user/user.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,7 @@ class _WelcomePageState extends State<WelcomeView> {
   final GlobalKey<FormState> _createUserFormKey = GlobalKey<FormState>();
 
   late bool isWideScreen;
-  bool? existsUserInDB;
+  User? loggedUser;
 
   late TesArteCard welcomingCard;
 
@@ -43,7 +45,7 @@ class _WelcomePageState extends State<WelcomeView> {
 
     usernameFormField = TesArteTextFormField(
         controller: usernameController,
-        hintText: "tesArteTeo",
+        hintText: "artisTeo",
         maxWidth: 350,
         bordered: false,
         validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value)
@@ -132,13 +134,13 @@ class _WelcomePageState extends State<WelcomeView> {
     );
   }
 
-  Future<bool> checkExistsUserIntesArteDB() async {
-    existsUserInDB ??= await User.existsUsersInDB();
-
-    return existsUserInDB ?? false;
+  Future<bool> existsUserOnDB() async {
+    loggedUser = User();
+    await loggedUser!.get();
+    return loggedUser!.userId.isNotEmptyAndNotNull;
   }
 
-  Container _gettesArteLogo() {
+  Container _getTesArteLogo() {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 5),
       child: Image.asset(
@@ -149,15 +151,17 @@ class _WelcomePageState extends State<WelcomeView> {
 
   FutureBuilder<bool> getContentCard() {
     return FutureBuilder<bool>(
-      future: existsUserInDB == null ? checkExistsUserIntesArteDB() : null,
+      future: existsUserOnDB(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return TesArteLoader();
-        } else if (snapshot.hasData && snapshot.data!) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => context.go(HomeView.route));
-          return TesArteLoader();
-        } else {
-          return welcomingCard;
+        switch(snapshot.connectionState) {
+          case ConnectionState.waiting: return TesArteLoader();
+          default:
+            // TODO: return TesArteSelectableProfiles
+            if (snapshot.hasData && snapshot.data!) {
+              TesArteSession.instance.startSession(loggedUser!);
+              WidgetsBinding.instance.addPostFrameCallback((_) => context.go(HomeView.route));
+            }
+            return welcomingCard;
         }
       },
     );
@@ -166,13 +170,14 @@ class _WelcomePageState extends State<WelcomeView> {
   @override
   BasicLayout build(BuildContext context) {
     return BasicLayout(
+      showSideBar: false,
       body: isWideScreen ? Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 15,
-            children: [_gettesArteLogo(), _getTitle()],
+            children: [_getTesArteLogo(), _getTitle()],
           ),
           TesArteDivider(direction: TesArteDividerDirection.vertical),
           getContentCard(),
@@ -181,7 +186,7 @@ class _WelcomePageState extends State<WelcomeView> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _gettesArteLogo(),
+          _getTesArteLogo(),
           _getTitle(),
           getContentCard(),
         ],

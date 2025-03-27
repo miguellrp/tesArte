@@ -1,3 +1,4 @@
+import 'package:tesArte/views/books_view/books_view.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
 import 'package:tesArte/views/welcome_view/welcome_view.dart';
 import 'package:flutter/material.dart';
@@ -7,18 +8,19 @@ class TesArteRouter {
   static final GoRouter config = GoRouter(
     routes: <RouteBase>[
       GoRoute(
+        name: 'welcoming',
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
-          return const WelcomeView();
+          return WelcomeView();
         },
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'home',
-            builder: (BuildContext context, GoRouterState state) {
-              return const HomeView();
-            },
-          ),
-        ],
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (BuildContext context, GoRouterState state) => HomeView(),
+      ),
+      GoRoute(
+        path: '/books',
+        builder: (BuildContext context, GoRouterState state) => BooksView(),
       ),
     ],
   );

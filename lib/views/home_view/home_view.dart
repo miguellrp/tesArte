@@ -12,7 +12,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   @override
-  Widget build(BuildContext context) {
+  BasicLayout build(BuildContext context) {
     return BasicLayout(
       body: Column(
         mainAxisSize: MainAxisSize.min,
