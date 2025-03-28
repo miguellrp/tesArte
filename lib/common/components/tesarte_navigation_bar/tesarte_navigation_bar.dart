@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesArte/common/components/tesarte_navigation_bar/tesarte_nav_bar_button.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
+import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 import 'package:tesArte/views/books_view/books_view.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
@@ -30,14 +31,14 @@ class _TesArteNavigationBarState extends State<TesArteNavigationBar> {
     return [
       TesArteNavBarButton(
         destinationIcon: Icons.home_filled,
-        destinationTitle: "Inicio", // TODO: lang
+        destinationTitle: AppLocalizations.of(context)!.home,
         selected: currentRoute == HomeView.route,
         navBarExtended: navBarExtended,
         destinationOnTap: () => context.go(HomeView.route)
       ),
       TesArteNavBarButton(
         destinationIcon: Icons.book,
-        destinationTitle: "Mis libros", // TODO: lang
+        destinationTitle: AppLocalizations.of(context)!.myBooks,
         selected: currentRoute == BooksView.route,
         navBarExtended: navBarExtended,
         destinationOnTap: () => context.go(BooksView.route)

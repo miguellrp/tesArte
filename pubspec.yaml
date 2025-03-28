@@ -40,6 +40,9 @@ dependencies:
   path: ^1.9.1
   sqflite_common_ffi: ^2.3.5
   go_router: ^14.8.1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +63,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - lib/assets/images/tesarte_logo.png

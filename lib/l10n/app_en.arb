@@ -1,0 +1,12 @@
+{
+  "accountSuccessfullyCreated": "Account successfully created",
+  "emptyNameWarning": "Name cannot be empty",
+  "errorOnCreatingAccount": "An error occurred while trying to create your account",
+  "enterNameToIdentifyYourself": "Enter a name to identify yourself:",
+  "isThisYourFirstTimeHere": "Is this your first time here?",
+  "pushOn": "Continue",
+  "home": "Home",
+  "myBooks": "My books",
+  "usernameAlreadyInUse": "Username is already in use",
+  "yourCulturalLibrary": "Your cultural library"
+}

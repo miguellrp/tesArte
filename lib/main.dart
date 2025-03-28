@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'app_config/router.dart';
+import 'package:tesArte/app_config/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +42,18 @@ class TesArteApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'tesArte',
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: Locale('gl'), // TODO: getPreferredLocale
+      supportedLocales: [
+        Locale('gl'),
+        Locale('es'),
+        Locale('en'),
+      ],
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: lightColorScheme,

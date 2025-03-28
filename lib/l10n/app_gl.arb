@@ -1,0 +1,12 @@
+{
+  "accountSuccessfullyCreated": "Conta creada correctamente",
+  "emptyNameWarning": "O nome non pode quedar baleiro",
+  "errorOnCreatingAccount": "Ocurriu un erro ó tratar de crear a túa conta",
+  "enterNameToIdentifyYourself": "Escribe un nome co que identificarte:",
+  "isThisYourFirstTimeHere": "É a túa primeira vez por aquí?",
+  "home": "Inicio",
+  "myBooks": "Os meus libros",
+  "pushOn": "Continuar",
+  "usernameAlreadyInUse": "O nome de usuario xa se atopa en uso",
+  "yourCulturalLibrary": "A túa libraría cultural"
+}

@@ -8,6 +8,7 @@ import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
+import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 import 'package:tesArte/models/user/user.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
@@ -48,7 +49,7 @@ class _WelcomePageState extends State<WelcomeView> {
         hintText: "artisTeo",
         maxWidth: 350,
         bordered: false,
-        validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value)
+        validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, context: context)
     );
   }
 
@@ -59,7 +60,7 @@ class _WelcomePageState extends State<WelcomeView> {
     isWideScreen = UtilViewport.getScreenWidth(context) >= 870;
 
     continueButton = TesArteTextIconButton(
-      text: "Continuar", // TODO: lang
+      text: AppLocalizations.of(context)!.pushOn,
       onPressed: () => validateFormAndContinue(),
     );
 
@@ -77,9 +78,9 @@ class _WelcomePageState extends State<WelcomeView> {
     welcomingCard = TesArteCard(
       spacing: 5,
       widgets: [
-        Text("Benvid@!", textAlign: TextAlign.center,
+        Text(AppLocalizations.of(context)!.isThisYourFirstTimeHere, textAlign: TextAlign.center,
             style: TextTheme.of(context).titleSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-        Text("Escribe un nome co que identificarte:", textAlign: TextAlign.center,
+        Text(AppLocalizations.of(context)!.enterNameToIdentifyYourself, textAlign: TextAlign.center,
             style: TextTheme.of(context).labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
         createUserForm
       ],
@@ -99,12 +100,12 @@ class _WelcomePageState extends State<WelcomeView> {
       if (mounted) {
         if (user.errorDB) {
           if (user.errorDBType!.contains("UNIQUE constraint failed")) {
-            TesArteToast.showErrorToast(context, message: "El nombre de usuario ya está en uso."); // TODO: lang
+            TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.usernameAlreadyInUse);
           } else {
-            TesArteToast.showErrorToast(context, message: "Ha ocurrido un error al intentar crear la cuenta."); // TODO: lang
+            TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.errorOnCreatingAccount);
           }
         } else {
-          TesArteToast.showSuccessToast(context, message: "Cuenta creada correctamente."); // TODO: lang
+          TesArteToast.showSuccessToast(context, message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
           context.go(HomeView.route);
         }
       }
@@ -122,11 +123,11 @@ class _WelcomePageState extends State<WelcomeView> {
     return RichText(
       textAlign: isWideScreen ? TextAlign.start : TextAlign.center,
       text: TextSpan(
-        text: "tesArte", // TODO: lang
+        text: "tesArte",
         style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary),
         children: [
           TextSpan(
-            text: "\na túa biblioteca cultural", // TODO: lang
+            text: "\n${AppLocalizations.of(context)!.yourCulturalLibrary}",
             style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary.withAlpha(150))
           )
         ]
