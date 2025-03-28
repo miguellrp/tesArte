@@ -25,7 +25,7 @@ class _BasicLayoutState extends State<BasicLayout> {
     return SkeletonLayout(content: Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        tesArteNavigationBar,
+        if (widget.showSideBar!) tesArteNavigationBar,
         Expanded(child: widget.body),
       ],
     ));

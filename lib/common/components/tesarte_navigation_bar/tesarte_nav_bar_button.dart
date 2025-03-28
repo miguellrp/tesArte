@@ -22,21 +22,23 @@ class TesArteNavBarButton extends StatelessWidget {
     return RoundedRectangleBorder(borderRadius: BorderRadius.circular(4));
   }
 
-  Icon _getDestinationIcon() {
-    return Icon(destinationIcon, color: selected ? Colors.white : Colors.black,);
+  Icon _getDestinationIcon(BuildContext context) {
+    return Icon(destinationIcon,
+      color: selected ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.onSurface
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return navBarExtended ? ListTile(
       contentPadding: const EdgeInsets.only(left: 10),
-      leading: _getDestinationIcon(),
+      leading: _getDestinationIcon(context),
       title: Text(destinationTitle, style: TextTheme.of(context).bodyMedium, maxLines: 1),
       shape: _getButtonShape(),
       onTap: destinationOnTap,
     ) : IconButton(
       tooltip: destinationTitle,
-      icon: _getDestinationIcon(),
+      icon: _getDestinationIcon(context),
       style: ButtonStyle(shape: WidgetStatePropertyAll(_getButtonShape())),
       onPressed: destinationOnTap,
     );

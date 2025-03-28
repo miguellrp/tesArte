@@ -29,11 +29,11 @@ void main() async {
   }
   databaseFactory = databaseFactoryFfi;
 
-  runApp(MyApp());
+  runApp(TesArteApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TesArteApp extends StatelessWidget {
+  const TesArteApp({super.key});
 
   @override
   Widget build(BuildContext context) {
