@@ -43,9 +43,8 @@ class User {
     }
   }
 
-  Future<User?> get() async {
+  Future<void> get() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
-    User? user;
 
     try {
       final List<Map<String, Object?>> usersMapList = await tesArteDB.query(_tableName, limit: 1);
@@ -63,9 +62,8 @@ class User {
     } catch (exception) {
       errorDB = true;
       errorDBType = exception.toString();
-      print(errorDBType);
+      print(exception);
     }
-    return user;
   }
 
 
