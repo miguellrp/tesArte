@@ -1,8 +1,11 @@
+import 'package:go_router/go_router.dart';
 import 'package:tesArte/app_config/app_config.dart';
 import 'package:tesArte/common/components/TesArte_title_bar/tesArte_title_bar.dart';
 import 'package:tesArte/common/components/tesarte_text_icon_button.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:tesArte/views/welcome_view/welcome_view.dart';
+import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 
 class SkeletonLayout extends StatefulWidget {
   final Widget content;
@@ -28,7 +31,11 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
           TesArteTextIconButton(
             text: "restore database",
             iconData: Icons.cleaning_services,
-            onPressed: () => TesArteDBHelper.restoreTesArteDatabase()
+            onPressed: () {
+              TesArteSession.instance.endSession();
+              TesArteDBHelper.restoreTesArteDatabase();
+              context.go(WelcomeView.route);
+            }
           )
         ],
       ),

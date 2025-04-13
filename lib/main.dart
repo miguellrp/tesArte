@@ -67,6 +67,7 @@ class TesArteApp extends StatelessWidget {
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: darkColorScheme,
+        splashColor: Colors.transparent,
         textTheme: tesArteTextTheme,
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: darkColorScheme.onPrimary,
@@ -90,7 +91,7 @@ final TextTheme tesArteTextTheme = TextTheme(
   headlineSmall: TextStyle(fontFamily: 'GrenzeGotisch', fontSize: 30),
   titleLarge: TextStyle(fontFamily: 'GrenzeGotisch', fontSize: 26),
   titleMedium: TextStyle(fontFamily: 'GrenzeGotisch', fontSize: 24),
-  titleSmall: TextStyle(fontFamily: 'GrenzeGotisch', fontSize: 22),
+  titleSmall: TextStyle(fontFamily: 'GrenzeGotisch', fontSize: 22, height: 1),
   bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16),
   bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14),
   bodySmall: TextStyle(fontFamily: 'Inter', fontSize: 12),
@@ -99,9 +100,9 @@ final TextTheme tesArteTextTheme = TextTheme(
   labelSmall: TextStyle(fontFamily: 'Inter', fontSize: 11),
 );
 
-/* --------------------------- */
+/* ----------------------------- */
 /* --- tesArte COLOR SCHEMES --- */
-/* --------------------------- */
+/* ----------------------------- */
 
 // --- ☀️ LIGHT COLOR SCHEME ☀️ ---
 final ColorScheme lightColorScheme = ColorScheme(
@@ -114,6 +115,7 @@ final ColorScheme lightColorScheme = ColorScheme(
   surface: Color(0xFFF2F6D0),
   onSurface: Color(0xFF443627),
   surfaceTint: Color(0xFF9EA189),
+  surfaceBright: Color(0xFFF8FFC1),
 
   error: Colors.redAccent,
   onError: Colors.white,
@@ -135,6 +137,7 @@ final ColorScheme darkColorScheme = ColorScheme(
   surface: Color(0xFF343131),
   onSurface: Color(0xFF6B5E59),
   surfaceTint: Color(0xFF1E1B1B),
+  surfaceBright: Color(0xFF413D3D),
 
   error: Colors.redAccent,
   onError: Colors.white,

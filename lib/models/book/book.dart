@@ -1,24 +1,123 @@
-class Book {
-  static final String _tableName = 't_book';
+import 'package:sqflite/sqflite.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
+import 'package:tesArte/data/domain.dart';
+import 'package:tesArte/data/tesarte_db_helper.dart';
+import 'package:tesArte/models/author/book_author.dart';
+import 'package:tesArte/models/book/google_book.dart';
 
-  String? bookId;
+class Book {
+  static final String tableName = 't_book';
+
+  int? bookId;
+  int? userId;
   String? title;
   String? subtitle;
-  int? publicationYear;
-  String? authorFullName;
+  int? publishedYear;
+  String? googleBookId;
   String? description;
-  String? imageUrl;
+  String? coverImage;
+  double? rating;
+  int? status; // 0 → TO BE READ, 1 → READING, 2 → READ
+
+  List<BookAuthor>? authorsList;
 
   bool errorDB = false;
   String? errorDBType;
 
   Book({
-    this.bookId,
+    this.userId,
     this.title,
     this.subtitle,
-    this.publicationYear,
-    this.authorFullName,
+    this.publishedYear,
+    this.googleBookId,
+    this.authorsList,
     this.description,
-    this.imageUrl
+    this.coverImage,
+    this.rating,
+    this.status = 0
   });
+
+  Book.fromMap(Map<String, dynamic> map) {
+    bookId = int.parse(map["a_book_id"].toString());
+    userId = int.parse(map["a_user_id"].toString());
+    title = map["a_title"].toString();
+    subtitle = map["a_subtitle"].toString();
+    publishedYear = int.tryParse(map["a_published_year"].toString());
+    googleBookId = map["a_google_book_id"].toString();
+    description = map["a_description"].toString();
+    coverImage = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
+    rating = double.tryParse(map["a_rating"].toString());
+    status = int.tryParse(map["a_status"].toString());
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      "a_book_id": bookId,
+      "a_user_id": userId,
+      "a_title": title,
+      "a_subtitle": subtitle,
+      "a_published_year": publishedYear,
+      "a_google_book_id": googleBookId,
+      "a_description": description,
+      "a_cover_image_path": coverImage,
+      "a_rating": rating,
+      "a_status": status
+    };
+  }
+
+  /* --- CRUD OPERATIONS --- */
+  Future<void> addBook() async {
+    final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
+    late int newBookId;
+
+    try {
+      newBookId = await tesArteDB.insert(tableName,
+        toMap(),
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+      // if no error on insert, add authors to book:
+      if (!errorDB) {
+        for (BookAuthor bookAuthor in authorsList!) {
+          bookAuthor.bookId = newBookId;
+          await bookAuthor.addAuthorToBook();
+        }
+      }
+    } catch (exception) {
+      errorDB = true;
+      errorDBType = exception.toString();
+    }
+  }
+
+  /* --- STATIC METHODS --- */
+  static Book fromGoogleBook(GoogleBook googleBook){
+    return Book(
+      title: googleBook.title,
+      subtitle: googleBook.subtitle,
+      publishedYear: googleBook.publishedYear,
+      googleBookId: googleBook.id,
+      authorsList: _getAuthorsFromGoogleBook(googleBook.authors),
+      description: _shortenDescriptionFromGoogleBook(googleBook.description),
+      coverImage: googleBook.coverImageUrl
+    );
+  }
+
+  static List<BookAuthor>? _getAuthorsFromGoogleBook(List<dynamic>? authorNames) {
+    List<BookAuthor>? authors;
+
+    if (authorNames != null && authorNames.isNotEmpty) {
+      authors = authorNames.map((authorName) => BookAuthor(name: authorName)).toList();
+    }
+
+    return authors;
+  }
+
+  static String? _shortenDescriptionFromGoogleBook(String? googleBookDescription) {
+    String? description;
+
+    if (googleBookDescription.isNotEmptyAndNotNull) {
+      description = googleBookDescription!.length <= Domain.dDescription ? googleBookDescription : googleBookDescription.substring(0, Domain.dDescription);
+    }
+
+    return description;
+  }
 }

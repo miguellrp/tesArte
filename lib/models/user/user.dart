@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 class User {
   static final String _tableName = 't_user';
 
-  String? userId;
+  int? userId;
   String? userName;
   String? firstName;
   String? lastName;
@@ -26,14 +26,19 @@ class User {
   });
 
   Map<String, Object?> toMap() {
-    return {"a_user_id": userId, "a_username": userName, "a_first_name": firstName, "a_last_name": lastName};
+    return {
+      "a_user_id": userId,
+      "a_username": userName,
+      "a_first_name": firstName,
+      "a_last_name": lastName
+    };
   }
 
   /* --- CRUD OPERATIONS --- */
   Future<void> createAccount() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
     try {
-      await tesArteDB.insert(_tableName,
+      userId = await tesArteDB.insert(_tableName,
         toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
@@ -51,7 +56,7 @@ class User {
       // TODO: multiple accounts
       Map<String, Object?> firstMap = usersMapList.first;
 
-      userId = firstMap["a_user_id"].toString();
+      userId = int.parse(firstMap["a_user_id"].toString());
       userName = firstMap["a_username"].toString();
       firstName = firstMap["a_first_name"].toString();
       lastName = firstMap["a_last_name"].toString();
@@ -62,7 +67,6 @@ class User {
     } catch (exception) {
       errorDB = true;
       errorDBType = exception.toString();
-      print(exception);
     }
   }
 
@@ -77,7 +81,7 @@ class User {
 
   static User fromMap(Map<String, Object?> map) {
     return User(
-      userId: map["a_user_id"].toString(),
+      userId: int.parse(map["a_user_id"].toString()),
       userName: map["a_username"].toString(),
       firstName: map["a_first_name"].toString(),
       lastName: map["a_last_name"].toString(),

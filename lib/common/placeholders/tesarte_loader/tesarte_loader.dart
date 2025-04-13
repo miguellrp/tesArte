@@ -1,5 +1,5 @@
-import 'package:tesArte/common/components/tesarte_loader/animated_paintball_painter.dart';
-import 'package:tesArte/common/components/tesarte_loader/theater_mask_painter.dart';
+import 'package:tesArte/common/placeholders/tesarte_loader/animated_paintball_painter.dart';
+import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_mask_painter.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -47,7 +47,7 @@ class _TesArteLoaderState extends State<TesArteLoader>
           alignment: Alignment.center,
           children: [
             CustomPaint(
-              painter: TheaterMaskPainter(color: Theme.of(context).colorScheme.primary),
+              painter: TesArteMaskPainter(color: Theme.of(context).colorScheme.primary),
               size: Size(45, 45),
             ),
             CustomPaint(

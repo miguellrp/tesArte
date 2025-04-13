@@ -24,9 +24,10 @@ class _BasicLayoutState extends State<BasicLayout> {
   SkeletonLayout build(BuildContext context) {
     return SkeletonLayout(content: Row(
       mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (widget.showSideBar!) tesArteNavigationBar,
-        Expanded(child: widget.body),
+        Expanded(child: Container(padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10), child: widget.body)),
       ],
     ));
   }

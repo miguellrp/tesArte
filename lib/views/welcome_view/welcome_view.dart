@@ -1,9 +1,9 @@
 import 'package:tesArte/common/components/tesarte_card.dart';
 import 'package:tesArte/common/components/tesarte_divider.dart';
-import 'package:tesArte/common/components/tesarte_loader/tesArte_loader.dart';
 import 'package:tesArte/common/components/tesarte_toast.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
 import 'package:tesArte/common/components/tesarte_text_icon_button.dart';
+import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
@@ -106,6 +106,7 @@ class _WelcomePageState extends State<WelcomeView> {
           }
         } else {
           TesArteToast.showSuccessToast(context, message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
+          TesArteSession.instance.startSession(user);
           context.go(HomeView.route);
         }
       }
@@ -119,7 +120,7 @@ class _WelcomePageState extends State<WelcomeView> {
     super.dispose();
   }
 
-  RichText _getTitle() {
+  RichText _getTitleView() {
     return RichText(
       textAlign: isWideScreen ? TextAlign.start : TextAlign.center,
       text: TextSpan(
@@ -138,7 +139,7 @@ class _WelcomePageState extends State<WelcomeView> {
   Future<bool> existsUserOnDB() async {
     loggedUser = User();
     await loggedUser!.get();
-    return loggedUser!.userId.isNotEmptyAndNotNull;
+    return loggedUser!.userId != null;
   }
 
   Container _getTesArteLogo() {
@@ -178,7 +179,7 @@ class _WelcomePageState extends State<WelcomeView> {
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 15,
-            children: [_getTesArteLogo(), _getTitle()],
+            children: [_getTesArteLogo(), _getTitleView()],
           ),
           TesArteDivider(direction: TesArteDividerDirection.vertical),
           getContentCard(),
@@ -188,7 +189,7 @@ class _WelcomePageState extends State<WelcomeView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _getTesArteLogo(),
-          _getTitle(),
+          _getTitleView(),
           getContentCard(),
         ],
       )

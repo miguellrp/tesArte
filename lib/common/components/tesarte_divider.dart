@@ -22,7 +22,7 @@ class TesArteDivider extends StatelessWidget {
     color ??= Theme.of(context).colorScheme.primary.withAlpha(150);
 
     switch (type) {
-      case TesArteDividerType.linear: return LinearDivider(direction: direction);
+      case TesArteDividerType.linear: return LinearDivider(direction: direction, color: color);
       case TesArteDividerType.dotted: return DottedDivider(direction: direction);
     }
   }
@@ -32,18 +32,19 @@ class TesArteDivider extends StatelessWidget {
 /* --- LINEAR DIVIDER --- */
 class LinearDivider extends StatelessWidget {
   final TesArteDividerDirection direction;
+  final Color? color;
 
-  const LinearDivider({super.key, this.direction = TesArteDividerDirection.horizontal});
+  const LinearDivider({super.key, this.direction = TesArteDividerDirection.horizontal, this.color});
   @override
   Widget build(BuildContext context) {
     return direction == TesArteDividerDirection.horizontal ? Divider(
-      color: Theme.of(context).colorScheme.primary.withAlpha(150),
+      color: color??Theme.of(context).colorScheme.primary.withAlpha(150),
       thickness: 2,
       height: 0,
       indent: 50,
       endIndent: 50,
     ) : VerticalDivider(
-      color: Theme.of(context).colorScheme.primary.withAlpha(150),
+      color: color??Theme.of(context).colorScheme.primary.withAlpha(150),
       thickness: 2,
       width: 0,
       indent: 120,

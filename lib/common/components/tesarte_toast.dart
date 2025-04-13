@@ -9,10 +9,6 @@ enum TesArteToastType {
 class TesArteToast {
   static showErrorToast(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      elevation: 12,
-      width: 350,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       backgroundColor: Colors.redAccent,
       content: Row(
         mainAxisSize: MainAxisSize.min,

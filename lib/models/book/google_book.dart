@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_dates.dart';
 
 class GoogleBook {
+  final String id;
   final String title;
   final String? subtitle;
   final String? publisherName;
@@ -16,6 +16,7 @@ class GoogleBook {
   final int? pageCount;
 
   GoogleBook({
+    required this.id,
     required this.title,
     this.subtitle,
     this.publisherName,
@@ -26,19 +27,6 @@ class GoogleBook {
 
     this.pageCount
   });
-
-  Container getPreview() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          if (coverImageUrl != null) Image.network(coverImageUrl!),
-          Text(title),
-          Text(authors.toString()),
-        ],
-      ),
-    );
-  }
 
   static Future<List<GoogleBook>> fetchFromAPI({required String term, required int limit}) async {
     const baseUrl = "https://www.googleapis.com/books/v1/volumes?q=";
@@ -55,7 +43,10 @@ class GoogleBook {
         throw Exception(results["error"]["message"]);
       }
 
-      results["items"].forEach((item) => booksFetched.add(GoogleBook.fromGoogleBooksAPI(item["volumeInfo"])));
+      if (results["items"] != null) {
+        results["items"].forEach((item) => booksFetched.add(GoogleBook.fromGoogleBooksAPI(item)));
+      }
+
     } catch(exception) {
      throw Exception(exception.toString());
     }
@@ -64,7 +55,11 @@ class GoogleBook {
   }
 
   static GoogleBook fromGoogleBooksAPI(Map <String, dynamic> dataFetched) {
+    final String id = dataFetched["id"];
+    dataFetched = dataFetched["volumeInfo"];
+
     return GoogleBook(
+      id: id,
       title: dataFetched["title"],
       subtitle: dataFetched["subtitle"],
 
