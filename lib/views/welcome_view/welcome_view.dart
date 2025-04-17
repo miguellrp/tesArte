@@ -1,3 +1,4 @@
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:tesArte/common/components/tesarte_card.dart';
 import 'package:tesArte/common/components/tesarte_divider.dart';
 import 'package:tesArte/common/components/tesarte_toast.dart';
@@ -27,30 +28,30 @@ class _WelcomePageState extends State<WelcomeView> {
   final GlobalKey<FormState> _createUserFormKey = GlobalKey<FormState>();
 
   late bool isWideScreen;
+  bool userInitialized = false;
+  bool widgetsInitialized = false;
+  bool existsLastLoggedUser = false;
+
   User? loggedUser;
 
-  late TesArteCard welcomingCard;
+  final TextEditingController usernameController = TextEditingController();
 
-  late Form createUserForm;
-
-  late TextEditingController usernameController;
-
-  late TesArteTextFormField usernameFormField;
-  late TesArteTextIconButton continueButton;
+  TesArteTextFormField? usernameFormField;
+  TesArteTextIconButton? continueButton;
+  TesArteCard? welcomingCard;
+  Form? createUserForm;
 
   @override
   void initState() {
-    super.initState();
-
-    usernameController = TextEditingController();
-
     usernameFormField = TesArteTextFormField(
-        controller: usernameController,
-        hintText: "artisTeo",
-        maxWidth: 350,
-        bordered: false,
-        validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, context: context)
+      controller: usernameController,
+      hintText: "artisTeo",
+      maxWidth: 350,
+      bordered: false,
+      validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, context: context)
     );
+
+    super.initState();
   }
 
   @override
@@ -58,59 +59,74 @@ class _WelcomePageState extends State<WelcomeView> {
     super.didChangeDependencies();
 
     isWideScreen = UtilViewport.getScreenWidth(context) >= 870;
-
-    continueButton = TesArteTextIconButton(
-      text: AppLocalizations.of(context)!.pushOn,
-      onPressed: () => validateFormAndContinue(),
-    );
-
-    createUserForm = Form(
-      key: _createUserFormKey,
-      child: Column(
-        spacing: 25,
-        children: [
-          usernameFormField,
-          continueButton
-        ],
-      ),
-    );
-
-    welcomingCard = TesArteCard(
-      spacing: 5,
-      widgets: [
-        Text(AppLocalizations.of(context)!.isThisYourFirstTimeHere, textAlign: TextAlign.center,
-            style: TextTheme.of(context).titleSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-        Text(AppLocalizations.of(context)!.enterNameToIdentifyYourself, textAlign: TextAlign.center,
-            style: TextTheme.of(context).labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-        createUserForm
-      ],
-    );
   }
 
-  void validateFormAndContinue() async {
-    final FormState form = _createUserFormKey.currentState!;
-
-    if (form.validate()) {
-      User user = User(
-        userName: usernameController.text,
+  void initializeWidgets() {
+    if (!widgetsInitialized) {
+      continueButton ??= TesArteTextIconButton(
+        text: AppLocalizations.of(context)!.pushOn,
+        icon: Icons.login,
+        onPressed: () => continueAction(),
       );
 
-      await user.createAccount();
+      createUserForm ??= Form(
+        key: _createUserFormKey,
+        child: Column(
+          spacing: 25,
+          children: [
+            usernameFormField!,
+            continueButton!
+          ],
+        ),
+      );
 
-      if (mounted) {
-        if (user.errorDB) {
-          if (user.errorDBType!.contains("UNIQUE constraint failed")) {
-            TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.usernameAlreadyInUse);
+      welcomingCard = TesArteCard(
+        spacing: 15,
+        widgets: [
+          if (!existsLastLoggedUser) ...[
+            Text(AppLocalizations.of(context)!.isThisYourFirstTimeHere, textAlign: TextAlign.center,
+                style: TextTheme.of(context).titleSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+            Text(AppLocalizations.of(context)!.enterNameToIdentifyYourself, textAlign: TextAlign.center,
+                style: TextTheme.of(context).labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary.withAlpha(160))),
+            createUserForm!
+          ]
+          else ...[
+            Text("Ola de novo, ${loggedUser!.userName}!",
+            style: TextTheme.of(context).titleSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary)), // TODO: lang
+            SizedBox(height: 120, width: 120, child: Placeholder(color: Colors.white.withAlpha(150))),
+            continueButton!
+          ]
+        ],
+      );
+    }
+    widgetsInitialized = true;
+  }
+
+  void continueAction() async {
+    if (!existsLastLoggedUser) {
+      final FormState form = _createUserFormKey.currentState!;
+
+      if (form.validate()) {
+        User user = User(
+          userName: usernameController.text,
+        );
+        await user.createAccount();
+
+        if (mounted) {
+          if (user.errorDB) {
+            if (user.errorDBType!.contains("UNIQUE constraint failed")) {
+              TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.usernameAlreadyInUse);
+            } else {
+              TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.errorOnCreatingAccount);
+            }
           } else {
-            TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.errorOnCreatingAccount);
+            TesArteToast.showSuccessToast(context, message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
+            TesArteSession.instance.startSession(user);
           }
-        } else {
-          TesArteToast.showSuccessToast(context, message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
-          TesArteSession.instance.startSession(user);
-          context.go(HomeView.route);
         }
       }
     }
+    if (mounted) context.go(HomeView.route);
   }
 
   // TODO:
@@ -136,10 +152,17 @@ class _WelcomePageState extends State<WelcomeView> {
     );
   }
 
-  Future<bool> existsUserOnDB() async {
-    loggedUser = User();
-    await loggedUser!.get();
-    return loggedUser!.userId != null;
+  Future<void> getLastLoggedUser() async {
+    if (!userInitialized) {
+      loggedUser = User();
+      await loggedUser!.getLastLoggedUser();
+      existsLastLoggedUser = loggedUser!.userName.isNotEmptyAndNotNull;
+
+      setState(() {
+        userInitialized = true;
+        widgetsInitialized = false;
+      });
+    }
   }
 
   Container _getTesArteLogo() {
@@ -151,26 +174,11 @@ class _WelcomePageState extends State<WelcomeView> {
     );
   }
 
-  FutureBuilder<bool> getContentCard() {
-    return FutureBuilder<bool>(
-      future: existsUserOnDB(),
-      builder: (context, snapshot) {
-        switch(snapshot.connectionState) {
-          case ConnectionState.waiting: return TesArteLoader();
-          default:
-            // TODO: return TesArteSelectableProfiles
-            if (snapshot.hasData && snapshot.data!) {
-              TesArteSession.instance.startSession(loggedUser!);
-              WidgetsBinding.instance.addPostFrameCallback((_) => context.go(HomeView.route));
-            }
-            return welcomingCard;
-        }
-      },
-    );
-  }
-
   @override
   BasicLayout build(BuildContext context) {
+    getLastLoggedUser();
+    initializeWidgets();
+
     return BasicLayout(
       showSideBar: false,
       body: isWideScreen ? Row(
@@ -182,7 +190,8 @@ class _WelcomePageState extends State<WelcomeView> {
             children: [_getTesArteLogo(), _getTitleView()],
           ),
           TesArteDivider(direction: TesArteDividerDirection.vertical),
-          getContentCard(),
+          if (loggedUser == null) TesArteLoader()
+          else welcomingCard!
         ],
       ) : Column(
         mainAxisSize: MainAxisSize.min,
@@ -190,7 +199,8 @@ class _WelcomePageState extends State<WelcomeView> {
         children: [
           _getTesArteLogo(),
           _getTitleView(),
-          getContentCard(),
+          if (loggedUser == null) TesArteLoader()
+          else welcomingCard!
         ],
       )
     );

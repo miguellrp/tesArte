@@ -23,12 +23,12 @@ class TesArteToast {
 
   static showSuccessToast(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: Colors.greenAccent.shade100,
       content: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 5,
         children: [
-          Icon(Icons.check_circle, color: Colors.greenAccent),
+          Icon(Icons.check_circle, color: Colors.green),
           Text(message, style: TextStyle(color: Colors.green)),
         ],
       ),

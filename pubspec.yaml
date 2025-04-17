@@ -81,3 +81,8 @@ flutter:
         - asset: lib/assets/fonts/Inter/Inter-VariableFont.ttf
         - asset: lib/assets/fonts/Inter/Inter-Italic-VariableFont.ttf
           style: italic
+    - family: WinkyRough
+      fonts:
+        - asset: lib/assets/fonts/WinkyRough/WinkyRough-VariableFont.ttf
+        - asset: lib/assets/fonts/WinkyRough/WinkyRough-Italic-VariableFont.ttf
+          style: italic

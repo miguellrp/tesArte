@@ -30,7 +30,7 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
           Text("DevMode", style: TextTheme.of(context).labelSmall!.copyWith(color: Colors.white),),
           TesArteTextIconButton(
             text: "restore database",
-            iconData: Icons.cleaning_services,
+            icon: Icons.cleaning_services,
             onPressed: () {
               TesArteSession.instance.endSession();
               TesArteDBHelper.restoreTesArteDatabase();

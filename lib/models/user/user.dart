@@ -48,11 +48,13 @@ class User {
     }
   }
 
-  Future<void> get() async {
+  Future<void> getLastLoggedUser() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
 
     try {
-      final List<Map<String, Object?>> usersMapList = await tesArteDB.query(_tableName, limit: 1);
+      final List<Map<String, Object?>> usersMapList = await tesArteDB.query(_tableName,
+          orderBy: "a_last_login_date asc",
+          limit: 1);
       // TODO: multiple accounts
       Map<String, Object?> firstMap = usersMapList.first;
 

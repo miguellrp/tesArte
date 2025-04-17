@@ -95,9 +95,9 @@ final TextTheme tesArteTextTheme = TextTheme(
   bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16),
   bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14),
   bodySmall: TextStyle(fontFamily: 'Inter', fontSize: 12),
-  labelLarge: TextStyle(fontFamily: 'Inter', fontSize: 14),
-  labelMedium: TextStyle(fontFamily: 'Inter', fontSize: 12),
-  labelSmall: TextStyle(fontFamily: 'Inter', fontSize: 11),
+  labelLarge: TextStyle(fontFamily: 'WinkyRough', fontSize: 16),
+  labelMedium: TextStyle(fontFamily: 'WinkyRough', fontSize: 14),
+  labelSmall: TextStyle(fontFamily: 'WinkyRough', fontSize: 13),
 );
 
 /* ----------------------------- */
