@@ -1,9 +1,9 @@
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:tesArte/common/components/tesarte_card.dart';
-import 'package:tesArte/common/components/tesarte_divider.dart';
-import 'package:tesArte/common/components/tesarte_toast.dart';
+import 'package:tesArte/common/components/generic/tesarte_card.dart';
+import 'package:tesArte/common/components/generic/tesarte_divider.dart';
+import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
-import 'package:tesArte/common/components/tesarte_text_icon_button.dart';
+import 'package:tesArte/common/components/generic/tesarte_text_icon_button.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
@@ -115,17 +115,20 @@ class _WelcomePageState extends State<WelcomeView> {
         if (mounted) {
           if (user.errorDB) {
             if (user.errorDBType!.contains("UNIQUE constraint failed")) {
-              TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.usernameAlreadyInUse);
+              TesArteToast.showErrorToast(message: AppLocalizations.of(context)!.usernameAlreadyInUse);
             } else {
-              TesArteToast.showErrorToast(context, message: AppLocalizations.of(context)!.errorOnCreatingAccount);
+              TesArteToast.showErrorToast(message: AppLocalizations.of(context)!.errorOnCreatingAccount);
             }
           } else {
-            TesArteToast.showSuccessToast(context, message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
+            TesArteToast.showSuccessToast(message: AppLocalizations.of(context)!.accountSuccessfullyCreated);
             TesArteSession.instance.startSession(user);
           }
         }
       }
+    } else {
+      TesArteSession.instance.startSession(loggedUser!);
     }
+    
     if (mounted) context.go(HomeView.route);
   }
 

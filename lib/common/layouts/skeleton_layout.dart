@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:tesArte/app_config/app_config.dart';
 import 'package:tesArte/common/components/TesArte_title_bar/tesArte_title_bar.dart';
-import 'package:tesArte/common/components/tesarte_text_icon_button.dart';
+import 'package:tesArte/common/components/generic/tesarte_text_icon_button.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:tesArte/views/welcome_view/welcome_view.dart';

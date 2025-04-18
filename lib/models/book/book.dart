@@ -84,9 +84,34 @@ class Book {
       }
     } catch (exception) {
       errorDB = true;
-      errorDBType = exception.toString();
+
+      if (exception is DatabaseException) {
+        if (exception.toString().contains("UNIQUE constraint failed: T_BOOK.a_google_book_id")) {
+          errorDBType = "CONSTRAINT ERROR: Book already exists in database";
+        }
+      }
+
+      if (errorDBType.isEmptyOrNull) errorDBType = exception.toString();
     }
   }
+
+  Future<int> deleteBook() async {
+    final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
+    int booksDeleted = 0; // TODO: allow multiple deletes
+
+    try {
+      booksDeleted = bookId = await tesArteDB.delete(tableName,
+        where: "a_book_id = ?",
+        whereArgs: [bookId]
+      );
+    } catch (exception) {
+      errorDB = true;
+      errorDBType = exception.toString();
+    }
+
+    return booksDeleted;
+  }
+
 
   /* --- STATIC METHODS --- */
   static Book fromGoogleBook(GoogleBook googleBook){

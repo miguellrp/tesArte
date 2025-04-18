@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:tesArte/common/components/tesarte_toast.dart';
+import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/models/book/book.dart';
 import 'package:tesArte/models/book/google_book.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
+import 'package:tesArte/views/books_view/dialogs/dialog_description_google_book.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIGoogleBook extends StatefulWidget {
@@ -69,10 +70,14 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
       child: Wrap(
         spacing: 2,
         children: [
-          IconButton(
-              tooltip: "Ver descrición do libro", // TODO: lang
-              icon: Icon(Symbols.book_5),
-              onPressed: null // TODO: show book description
+          if (widget.googleBook.description.isNotEmptyAndNotNull) IconButton(
+            tooltip: "Ver descrición do libro", // TODO: lang
+            icon: Icon(Symbols.book_5),
+            onPressed: () => DialogDescriptionGoogleBook.show(
+              context,
+              titleBook: widget.googleBook.title,
+              descriptionBook: widget.googleBook.description!,
+            )
           ),
           IconButton(
             tooltip: "Engadir libro ó estante", // TODO: lang
@@ -85,10 +90,14 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
 
               if (mounted) {
                 if (!selectedBook.errorDB) {
-                  TesArteToast.showSuccessToast(context, message: "Engadiuse o libro ó teu estante"); // TODO: lang
+                  TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
                   Navigator.of(context).pop(true);
                 } else {
-                  TesArteToast.showErrorToast(context, message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
+                  if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
+                    TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
+                  } else {
+                    TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
+                  }
                 }
               }
             }

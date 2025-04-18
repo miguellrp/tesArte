@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:tesArte/common/components/tesarte_divider.dart';
-import 'package:tesArte/common/components/tesarte_search_bar.dart';
+import 'package:tesArte/common/components/generic/tesarte_divider.dart';
+import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/models/book/book_list.dart';
 import 'package:tesArte/ui_models/book/ui_book.dart';
-import 'package:tesArte/views/books_view/components/google_books_preview_dialog.dart';
+import 'package:tesArte/views/books_view/dialogs/dialog_preview_google_books.dart';
 
 class BooksView extends StatefulWidget {
   static const String route = "/books";
@@ -35,7 +35,7 @@ class _BooksViewState extends State<BooksView> {
       tooltip: "Procurar novo libro", // TODO: lang
       icon: Icon(Symbols.globe_book_rounded),
       onPressed: () async {
-        bool addedNewBook = await GoogleBooksPreviewDialog.show(context) ?? false;
+        bool addedNewBook = await DialogPreviewGoogleBooks.show(context) ?? false;
 
         if (addedNewBook) setState(() => bookshelfInitialized = false);
       },
@@ -58,18 +58,34 @@ class _BooksViewState extends State<BooksView> {
     );
   }
 
-  Wrap _getBookshelf() {
-    List<Widget> bookshelfContent = [];
+  Widget _getBookshelf() {
+    Widget bookshelfContent;
 
     if (bookshelf.books.isEmpty) {
-      bookshelfContent.add(Center(
+      bookshelfContent = Center(
         child: Text("O estante está baleiro") // TODO: lang
-      ));
+      );
     } else {
-      bookshelf.books.forEach((book) => bookshelfContent.add(UIBook(book: book)));
+      final List<UIBook> books = [];
+      bookshelf.books.forEach((book) => books.add(
+        UIBook(
+          book: book,
+          onDeleteBook: () => setState(() => bookshelfInitialized = false)
+        )
+      ));
+
+      bookshelfContent = SingleChildScrollView(
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          direction: Axis.horizontal,
+          spacing: 10,
+          runSpacing: 10,
+          children: books
+        ),
+      );
     }
 
-    return Wrap(children: bookshelfContent);
+    return bookshelfContent;
   }
 
   @override
@@ -79,7 +95,7 @@ class _BooksViewState extends State<BooksView> {
     return BasicLayout(
       body: Column(
         mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 20,
         children: [
           _getTitleView(),
@@ -93,8 +109,7 @@ class _BooksViewState extends State<BooksView> {
             ]
           ),
           TesArteDivider(),
-          if (bookshelfInitialized) _getBookshelf()
-          else TesArteLoader()
+          Expanded(child: bookshelfInitialized ? _getBookshelf() : TesArteLoader())
         ],
       )
     );

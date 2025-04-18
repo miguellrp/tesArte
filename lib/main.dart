@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -70,8 +71,8 @@ class TesArteApp extends StatelessWidget {
         splashColor: Colors.transparent,
         textTheme: tesArteTextTheme,
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: darkColorScheme.onPrimary,
-          selectionColor: darkColorScheme.primary,
+          cursorColor: darkColorScheme.primary,
+          selectionColor: darkColorScheme.onPrimary.darken(),
           selectionHandleColor: darkColorScheme.onPrimary
         ),
       ),

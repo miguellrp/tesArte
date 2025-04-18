@@ -4,8 +4,11 @@ import 'package:tesArte/views/welcome_view/welcome_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class TesArteRouter {
   static final GoRouter config = GoRouter(
+    navigatorKey: navigatorKey,
     routes: <RouteBase>[
       GoRoute(
         name: 'welcoming',

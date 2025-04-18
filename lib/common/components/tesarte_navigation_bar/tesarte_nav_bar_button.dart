@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 
 class TesArteNavBarButton extends StatelessWidget {
   final IconData destinationIcon;
   final String destinationTitle;
-  final VoidCallback? destinationOnTap;
+  final VoidCallback destinationOnTap;
 
   final bool selected;
   final bool navBarExtended;
@@ -12,7 +13,7 @@ class TesArteNavBarButton extends StatelessWidget {
     super.key,
     required this.destinationIcon,
     required this.destinationTitle,
-    this.destinationOnTap,
+    required this.destinationOnTap,
 
     this.selected = false,
     this.navBarExtended = true
@@ -36,10 +37,9 @@ class TesArteNavBarButton extends StatelessWidget {
       title: Text(destinationTitle, style: TextTheme.of(context).bodyMedium, maxLines: 1),
       shape: _getButtonShape(),
       onTap: destinationOnTap,
-    ) : IconButton(
-      tooltip: destinationTitle,
+    ) : TesArteIconButton(
+      tooltipText: destinationTitle,
       icon: _getDestinationIcon(context),
-      style: ButtonStyle(shape: WidgetStatePropertyAll(_getButtonShape())),
       onPressed: destinationOnTap,
     );
   }
