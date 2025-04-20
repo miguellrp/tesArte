@@ -6,8 +6,9 @@ import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 class TesArteRating extends StatefulWidget {
   /// [double] value between 0 and 5
   double? rating;
+  VoidCallback? onChange;
 
-  TesArteRating({super.key, this.rating = 1.5});
+  TesArteRating({super.key, this.rating = 1.5, this.onChange});
 
   @override
   State<TesArteRating> createState() => _TesArteRatingState();
@@ -46,6 +47,8 @@ class _TesArteRatingState extends State<TesArteRating> {
     setState(() {
       widget.rating = (indexStar + 1).toDouble();
       if (totalStars[indexStar].isHalfStar) widget.rating = widget.rating! - 0.5;
+
+      if (widget.onChange != null) widget.onChange!();
     });
   }
 
@@ -89,7 +92,7 @@ class _TesArteRatingState extends State<TesArteRating> {
             onExit: (_) => doExitAction(),
             child: _getRatingStars()
           ),
-          SizedBox(width: 16)
+          SizedBox(width: 22)
         ],
       ),
     );

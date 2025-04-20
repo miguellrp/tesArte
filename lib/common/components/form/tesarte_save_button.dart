@@ -3,16 +3,19 @@ import 'package:tesArte/common/components/generic/tesarte_text_icon_button.dart'
 
 class TesArteSaveButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final bool enable;
+  final bool enabled;
+  final bool formHasChanges;
 
-  const TesArteSaveButton({super.key, required this.onPressed, this.enable = true});
+  const TesArteSaveButton({super.key, required this.onPressed, this.enabled = true, this.formHasChanges = false});
 
   @override
   TesArteTextIconButton build(BuildContext context) {
     return TesArteTextIconButton(
-      text: "Guardar cambios", // TODO: lang
-      icon: enable ? Icons.save : Icons.save_outlined,
-      onPressed: enable ? () => onPressed() : null,
+      text: "Gardar cambios", // TODO: lang
+      subText: formHasChanges ? "Con cambios sen gardar" : null, // TODO: lang
+      icon: enabled ? Icons.save : Icons.save_outlined,
+      enabled: enabled,
+      onPressed: enabled ? () => onPressed() : null,
     );
   }
 }

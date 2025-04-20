@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 
 class TesArteMaskPainter extends CustomPainter {
   final Color color;
@@ -10,6 +11,16 @@ class TesArteMaskPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
+      ..shader = LinearGradient(
+        colors: [
+          color,
+          color.lighten(percent: .3),
+        ],
+        stops: [size.width / 2 - 0.01, size.width / 2]
+      ).createShader(Rect.fromPoints(
+        Offset(0, 0),
+        Offset(size.width / 2, size.height),
+      ))
       ..style = PaintingStyle.fill;
     final clearPaint = Paint()..blendMode = BlendMode.clear;
 

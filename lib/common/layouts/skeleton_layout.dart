@@ -19,7 +19,7 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
   Container getTesArteDevTools() {
     return Container(
       margin: const EdgeInsets.only(bottom: 5),
-      width: 350,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       height: 50,
       color: Theme.of(context).colorScheme.primary.withAlpha(150),
       child: Row(
@@ -53,7 +53,7 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
               alignment: Alignment.topCenter,
               children: [
                 widget.content,
-                if (AppConfig.developmentMode) Positioned(bottom: 0, child: getTesArteDevTools())
+                if (AppConfig.developmentMode) Positioned(top: 0, right: 0, child: getTesArteDevTools())
               ],
             )
           ),

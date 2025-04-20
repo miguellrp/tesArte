@@ -7,44 +7,92 @@ import 'package:tesArte/models/book/book.dart';
 
 final double spacing = 20.0;
 
-class FormEditBook extends StatelessWidget {
+class FormEditBook extends StatefulWidget {
   final Book book;
 
-  FormEditBook({super.key, required this.book});
+  const FormEditBook({super.key, required this.book});
+
+  @override
+  State<FormEditBook> createState() => _FormEditBookState();
+}
+
+class _FormEditBookState extends State<FormEditBook> {
+  bool formHasChanges = false;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController titleBookController = TextEditingController();
   final TextEditingController subtitleBookController = TextEditingController();
   final TextEditingController descriptionBookController = TextEditingController();
 
+  late final TesArteTextFormField titleFormField;
+  late final TesArteTextFormField subtitleFormField;
+  late final TesArteTextFormField descriptionFormField;
+
   late final TesArteRating bookRating;
 
-  late final TesArteSaveButton saveButton;
+  @override
+  void initState() {
+    _initializeFormFields();
+    _initializeWidgets();
+    super.initState();
+  }
 
-  void _initializeControllersValues() {
-    titleBookController.text = book.title ?? "";
-    subtitleBookController.text = book.subtitle ?? "";
-    descriptionBookController.text = book.description ?? "";
+  void markFormWithChanges() {
+    if (!formHasChanges) setState(() => formHasChanges = true);
+  }
+
+  void _initializeFormFields() {
+    titleBookController.text = widget.book.title ?? "";
+    subtitleBookController.text = widget.book.subtitle ?? "";
+    descriptionBookController.text = widget.book.description ?? "";
+
+    titleFormField = TesArteTextFormField(
+      labelText: "Título", // TODO: lang
+      controller: titleBookController,
+      maxWidth: 650,
+      onChange: (_) => markFormWithChanges(),
+    );
+
+    subtitleFormField = TesArteTextFormField(
+      labelText: "Subtítulo", // TODO: lang
+      controller: subtitleBookController,
+      maxWidth: 650,
+      onChange: (_) => markFormWithChanges(),
+    );
+
+    descriptionFormField = TesArteTextFormField(
+      labelText: "Descripción", // TODO: lang
+      textFormFieldType: TextFormFieldType.longText,
+      minLines: 5,
+      controller: descriptionBookController,
+      onChange: (_) => markFormWithChanges(),
+    );
   }
 
   void _initializeWidgets() {
     bookRating = TesArteRating(
-      rating: book.rating,
+      rating: widget.book.rating,
+      onChange: () => markFormWithChanges()
     );
+  }
 
-    saveButton = TesArteSaveButton(
+  TesArteSaveButton getSaveButton() {
+    return TesArteSaveButton(
+      enabled: formHasChanges,
+      formHasChanges: formHasChanges,
       onPressed: () async {
         if (formKey.currentState!.validate()) {
-          book.title = titleBookController.text;
-          book.subtitle = subtitleBookController.text;
-          book.description = descriptionBookController.text;
-          book.rating = bookRating.rating;
+          widget.book.title = titleBookController.text;
+          widget.book.subtitle = subtitleBookController.text;
+          widget.book.description = descriptionBookController.text;
+          widget.book.rating = bookRating.rating;
 
-          await book.update();
+          await widget.book.update();
 
-          if (book.errorDB) {
+          if (widget.book.errorDB) {
             TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar gardar os cambios"); // TODO: lang
           } else {
+            setState(() => formHasChanges = false);
             TesArteToast.showSuccessToast(message: "Cambios gardados correctamente"); // TODO: lang
           }
         }
@@ -54,13 +102,10 @@ class FormEditBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _initializeControllersValues();
-    _initializeWidgets();
-
     return Form(
       key: formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           spacing: spacing,
@@ -74,7 +119,7 @@ class FormEditBook extends StatelessWidget {
                 Column(
                   spacing: spacing / 2,
                   children: [
-                    book.getCoverImage(),
+                    widget.book.getCoverImage(),
                     bookRating,
                   ]
                 ),
@@ -83,27 +128,14 @@ class FormEditBook extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 20,
                   children: [
-                    TesArteTextFormField(
-                      labelText: "Título", // TODO: lang
-                      controller: titleBookController,
-                      maxWidth: 650
-                    ),
-                    TesArteTextFormField(
-                      labelText: "Subtítulo", // TODO: lang
-                      controller: subtitleBookController,
-                      maxWidth: 650
-                    ),
+                    titleFormField,
+                    subtitleFormField,
                   ]
                 )
               ],
             ),
-            TesArteTextFormField(
-              labelText: "Descripción", // TODO: lang
-              textFormFieldType: TextFormFieldType.longText,
-              maxLines: 10,
-              controller: descriptionBookController,
-            ),
-            saveButton
+            descriptionFormField,
+            getSaveButton()
           ]
         ),
       ),

@@ -46,7 +46,6 @@ class _BasicLayoutState extends State<BasicLayout> {
     return SkeletonLayout(
       content: Row(
         mainAxisSize: MainAxisSize.max,
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.showSideBar!) tesArteNavigationBar,
           Expanded(

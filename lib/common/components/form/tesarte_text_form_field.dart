@@ -8,6 +8,7 @@ enum TextFormFieldType {
 }
 
 typedef StringCallback = String? Function(String?);
+typedef VoidStringCallback = void Function(String?);
 
 class TesArteTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -18,8 +19,11 @@ class TesArteTextFormField extends StatelessWidget {
 
   final bool bordered;
   final int? maxLength;
+  final int? minLines;
   final int? maxLines;
   final double maxWidth;
+
+  final VoidStringCallback? onChange;
 
 
   const TesArteTextFormField({
@@ -32,8 +36,11 @@ class TesArteTextFormField extends StatelessWidget {
 
     this.bordered = true,
     this.maxLength,
+    this.minLines,
     this.maxLines,
     this.maxWidth = double.infinity,
+
+    this.onChange
   });
 
   @override
@@ -62,8 +69,10 @@ class TesArteTextFormField extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color: Theme.of(context).colorScheme.tertiary,
         ),
+        onChanged: onChange != null ? (value) => onChange!(value) : null,
         validator: validator != null ? (value) => validator!(value) : null,
         maxLength: maxLength,
+        minLines: minLines,
         maxLines: maxLines,
         obscureText: textFormFieldType == TextFormFieldType.password,
         decoration: InputDecoration(
