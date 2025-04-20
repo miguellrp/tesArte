@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 
 class TesArteCard extends StatelessWidget {
   final Color? cardColor;
@@ -22,7 +23,7 @@ class TesArteCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        color: cardColor ?? Theme.of(context).colorScheme.onSurface,
+        color: cardColor ?? Theme.of(context).colorScheme.onSurface.darken(percent: .2),
         elevation: 8,
         child: Padding(
           padding: const EdgeInsets.all(15),

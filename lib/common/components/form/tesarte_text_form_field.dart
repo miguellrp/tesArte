@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 enum TextFormFieldType {
   text,
-  password
+  password,
+  longText
 }
 
 typedef StringCallback = String? Function(String?);
@@ -17,6 +18,7 @@ class TesArteTextFormField extends StatelessWidget {
 
   final bool bordered;
   final int? maxLength;
+  final int? maxLines;
   final double maxWidth;
 
 
@@ -30,7 +32,8 @@ class TesArteTextFormField extends StatelessWidget {
 
     this.bordered = true,
     this.maxLength,
-    this.maxWidth = 300,
+    this.maxLines,
+    this.maxWidth = double.infinity,
   });
 
   @override
@@ -61,7 +64,8 @@ class TesArteTextFormField extends StatelessWidget {
         ),
         validator: validator != null ? (value) => validator!(value) : null,
         maxLength: maxLength,
-        obscureText: textFormFieldType == TextFormFieldType.password,textAlign: TextAlign.center,
+        maxLines: maxLines,
+        obscureText: textFormFieldType == TextFormFieldType.password,
         decoration: InputDecoration(
           labelText: labelText,
           alignLabelWithHint: true,

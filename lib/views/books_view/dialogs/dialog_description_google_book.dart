@@ -57,7 +57,7 @@ class DialogDescriptionGoogleBook {
   static TesArteIconButton _getCloseButtonDialog(BuildContext context) {
     return TesArteIconButton(
       icon: Icon(Icons.close),
-      tooltipText: "Pechar diálogo", // TODO: lang
+      tooltipText: "Pechar descrición", // TODO: lang
       onPressed: () => Navigator.pop(context)
     );
   }

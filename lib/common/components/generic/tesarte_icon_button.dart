@@ -47,11 +47,12 @@ class _TesArteIconButtonState extends State<TesArteIconButton> {
   Tooltip build(BuildContext context) {
     return Tooltip(
       key: _tooltipKey,
-      message: widget.tooltipText,
+      message: widget.tooltipText??"",
       triggerMode: TooltipTriggerMode.manual,
       child: IconButton(
+        constraints: BoxConstraints(),
         focusNode: _focusButtonNode,
-        padding: EdgeInsets.zero,
+        padding: const EdgeInsets.all(4),
         icon: widget.icon,
         color: widget.color??Theme.of(context).colorScheme.secondary,
         onPressed: widget.onPressed,

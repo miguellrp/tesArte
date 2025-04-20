@@ -86,7 +86,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
               Book selectedBook = Book.fromGoogleBook(widget.googleBook);
               selectedBook.userId = TesArteSession.instance.getActiveUser()!.userId;
 
-              await selectedBook.addBook();
+              await selectedBook.add();
 
               if (mounted) {
                 if (!selectedBook.errorDB) {

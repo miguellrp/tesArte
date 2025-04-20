@@ -12,24 +12,16 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
 
-  Text _getTitleView() {
-    return Text("A miña actividade recente", // TODO: lang
-      textAlign: TextAlign.center,
-      style: TextTheme.of(context).displayMedium!.copyWith(
-        color: Theme.of(context).colorScheme.onPrimary
-      )
-    );
-  }
-
   @override
   BasicLayout build(BuildContext context) {
     return BasicLayout(
+      titleView: "A miña actividade recente", // TODO: lang
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         spacing: 5,
         children: [
-          _getTitleView(),
+          Text("TODO: recent activity"),
         ]
       )
     );

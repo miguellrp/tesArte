@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/data/domain.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:tesArte/models/author/book_author.dart';
 import 'package:tesArte/models/book/google_book.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Book {
   static final String tableName = 't_book';
@@ -15,7 +18,7 @@ class Book {
   int? publishedYear;
   String? googleBookId;
   String? description;
-  String? coverImage;
+  String? coverImagePath;
   double? rating;
   int? status; // 0 → TO BE READ, 1 → READING, 2 → READ
 
@@ -32,7 +35,7 @@ class Book {
     this.googleBookId,
     this.authorsList,
     this.description,
-    this.coverImage,
+    this.coverImagePath,
     this.rating,
     this.status = 0
   });
@@ -45,7 +48,7 @@ class Book {
     publishedYear = int.tryParse(map["a_published_year"].toString());
     googleBookId = map["a_google_book_id"].toString();
     description = map["a_description"].toString();
-    coverImage = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
+    coverImagePath = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
     rating = double.tryParse(map["a_rating"].toString());
     status = int.tryParse(map["a_status"].toString());
   }
@@ -59,14 +62,14 @@ class Book {
       "a_published_year": publishedYear,
       "a_google_book_id": googleBookId,
       "a_description": description,
-      "a_cover_image_path": coverImage,
+      "a_cover_image_path": coverImagePath,
       "a_rating": rating,
       "a_status": status
     };
   }
 
   /* --- CRUD OPERATIONS --- */
-  Future<void> addBook() async {
+  Future<void> add() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
     late int newBookId;
 
@@ -95,6 +98,24 @@ class Book {
     }
   }
 
+  Future<void> update() async {
+    final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
+    late int booksUpdated; // TODO: allow multiple updates [❓]
+
+    try {
+      booksUpdated = await tesArteDB.update(tableName,
+        toMap(),
+        where: "a_book_id = ?",
+        whereArgs: [bookId]
+      );
+    } catch (exception) {
+      errorDB = true;
+
+      if (errorDBType.isEmptyOrNull) errorDBType = exception.toString();
+      print(errorDBType);
+    }
+  }
+
   Future<int> deleteBook() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
     int booksDeleted = 0; // TODO: allow multiple deletes
@@ -112,6 +133,17 @@ class Book {
     return booksDeleted;
   }
 
+  /* --- GETTERS --- */
+  ClipRRect getCoverImage() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: coverImagePath.isNotEmptyAndNotNull ? FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: coverImagePath!,
+      ) : BookPlaceholder(),
+    );
+  }
+
 
   /* --- STATIC METHODS --- */
   static Book fromGoogleBook(GoogleBook googleBook){
@@ -122,7 +154,7 @@ class Book {
       googleBookId: googleBook.id,
       authorsList: _getAuthorsFromGoogleBook(googleBook.authors),
       description: _shortenDescriptionFromGoogleBook(googleBook.description),
-      coverImage: googleBook.coverImageUrl
+      coverImagePath: googleBook.coverImageUrl
     );
   }
 

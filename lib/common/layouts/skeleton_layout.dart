@@ -48,8 +48,8 @@ class _SkeletonLayoutState extends State<SkeletonLayout> {
       body: Column(
         children: [
           TesArteTitleBar(),
-          Expanded(child:
-            Stack(
+          Expanded(
+            child: Stack(
               alignment: Alignment.topCenter,
               children: [
                 widget.content,

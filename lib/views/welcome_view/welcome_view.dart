@@ -1,4 +1,3 @@
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:tesArte/common/components/generic/tesarte_card.dart';
 import 'package:tesArte/common/components/generic/tesarte_divider.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';

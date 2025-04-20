@@ -34,7 +34,12 @@ class TesArteNavBarButton extends StatelessWidget {
     return navBarExtended ? ListTile(
       contentPadding: const EdgeInsets.only(left: 10),
       leading: _getDestinationIcon(context),
-      title: Text(destinationTitle, style: TextTheme.of(context).bodyMedium, maxLines: 1),
+      title: Text(destinationTitle,
+        maxLines: 1,
+        style: TextTheme.of(context).bodyMedium!.copyWith(
+        color: selected ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.onSurface
+        )
+      ),
       shape: _getButtonShape(),
       onTap: destinationOnTap,
     ) : TesArteIconButton(

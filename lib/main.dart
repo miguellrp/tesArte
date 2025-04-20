@@ -71,9 +71,9 @@ class TesArteApp extends StatelessWidget {
         splashColor: Colors.transparent,
         textTheme: tesArteTextTheme,
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: darkColorScheme.primary,
-          selectionColor: darkColorScheme.onPrimary.darken(),
-          selectionHandleColor: darkColorScheme.onPrimary
+          cursorColor: darkColorScheme.tertiary,
+          selectionColor: darkColorScheme.secondary.darken(),
+          selectionHandleColor: darkColorScheme.secondary.darken()
         ),
       ),
       routerConfig: TesArteRouter.config,
@@ -136,7 +136,7 @@ final ColorScheme darkColorScheme = ColorScheme(
   onSecondary: Color(0xFF443627),
 
   surface: Color(0xFF343131),
-  onSurface: Color(0xFF6B5E59),
+  onSurface: Color(0xFF7C6E69),
   surfaceTint: Color(0xFF1E1B1B),
   surfaceBright: Color(0xFF413D3D),
 

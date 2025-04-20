@@ -4,7 +4,7 @@ import 'package:tesArte/common/utils/tesarte_extensions.dart';
 class TesArteTextIconButton extends StatefulWidget {
   final String text;
   final IconData? icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   final Color? backgroundColor;
   final Color? foregroundColor;
@@ -13,7 +13,7 @@ class TesArteTextIconButton extends StatefulWidget {
     super.key,
     required this.text,
     this.icon,
-    required this.onPressed,
+    this.onPressed,
     this.backgroundColor,
     this.foregroundColor,
   });
@@ -57,7 +57,7 @@ class _TesArteTextIconButtonState extends State<TesArteTextIconButton> {
         ),
       ),
       icon: widget.icon != null ? Icon(widget.icon, color: widget.foregroundColor ?? Theme.of(context).colorScheme.onSecondary) : null,
-      onPressed: () => widget.onPressed(),
+      onPressed: widget.onPressed,
       focusNode: _focusNode,
       onFocusChange: (bool isFocusing) => _onFocusAction(isFocusing),
       onHover: (bool isHovering) => _onFocusAction(isHovering),

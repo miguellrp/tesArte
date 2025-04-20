@@ -49,15 +49,6 @@ class _BooksViewState extends State<BooksView> {
     setState(() => bookshelfInitialized = true);
   }
 
-  Text _getTitleView() {
-    return Text("Os meus libros", // TODO: lang
-      textAlign: TextAlign.center,
-      style: TextTheme.of(context).displayMedium!.copyWith(
-        color: Theme.of(context).colorScheme.onPrimary
-      )
-    );
-  }
-
   Widget _getBookshelf() {
     Widget bookshelfContent;
 
@@ -93,12 +84,12 @@ class _BooksViewState extends State<BooksView> {
     initializeBookshelf();
 
     return BasicLayout(
+      titleView: "Os meus libros", // TODO: lang
       body: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 20,
         children: [
-          _getTitleView(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
