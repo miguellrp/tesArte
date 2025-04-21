@@ -46,6 +46,7 @@ class _WelcomePageState extends State<WelcomeView> {
       controller: usernameController,
       hintText: "artisTeo",
       maxWidth: 350,
+      maxLines: 1,
       bordered: false,
       validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, context: context)
     );

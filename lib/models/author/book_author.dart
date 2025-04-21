@@ -1,13 +1,16 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:tesArte/models/author/author.dart';
 
 class BookAuthor extends Author {
   static final String tableName = 't_book_author';
 
+  int? bookAuthorId;
   int? bookId;
 
   BookAuthor({
+    this.bookAuthorId,
     super.authorId,
     super.name,
     this.bookId
@@ -20,7 +23,8 @@ class BookAuthor extends Author {
   @override
   Map<String, Object?> toMap() {
     return {
-      ...super.toMap(),
+      "a_book_author_id": bookAuthorId,
+      "a_author_id": super.toMap()["a_author_id"],
       "a_book_id": bookId
     };
   }
@@ -29,10 +33,10 @@ class BookAuthor extends Author {
   Future<void> addAuthorToBook() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
     try {
-      await tesArteDB.insert(tableName,
-        toMap(),
-        conflictAlgorithm: ConflictAlgorithm.abort,
-      );
+        await tesArteDB.insert(tableName,
+          toMap(),
+          conflictAlgorithm: ConflictAlgorithm.abort,
+        );
     } catch (exception) {
       errorDB = true;
       errorDBType = exception.toString();

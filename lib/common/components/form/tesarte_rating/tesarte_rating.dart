@@ -6,9 +6,10 @@ import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 class TesArteRating extends StatefulWidget {
   /// [double] value between 0 and 5
   double? rating;
+  bool readOnly;
   VoidCallback? onChange;
 
-  TesArteRating({super.key, this.rating = 1.5, this.onChange});
+  TesArteRating({super.key, this.rating = 1.5, this.readOnly = false, this.onChange});
 
   @override
   State<TesArteRating> createState() => _TesArteRatingState();
@@ -19,7 +20,8 @@ class _TesArteRatingState extends State<TesArteRating> {
   double? hoverRating;
 
   Row _getRatingStars() {
-    totalStars = List.generate(5, (index) => TesArteStarRating(
+    totalStars = List.generate(5, (index) =>  TesArteStarRating(
+      readOnly: widget.readOnly,
       isHalfStar: widget.rating != null && widget.rating! > index && widget.rating! < index + 1,
       isFullStar: widget.rating != null && index < widget.rating!.floor(),
       isHoverHalfStar: hoverRating != null && hoverRating! > index && hoverRating! < index + 1,
@@ -58,12 +60,11 @@ class _TesArteRatingState extends State<TesArteRating> {
 
   void doClearRatingAction() {
     setState(() => widget.rating = null);
+
+    if (widget.onChange != null) widget.onChange!();
   }
 
-  @override
-  Container build(BuildContext context) {
-    assert(widget.rating == null || widget.rating! >= 0 && widget.rating! <= 5, "Rating must be between 0 and 5 [value = ${widget.rating}]");
-
+  Container _getRatingInteractive() {
     return Container(
       constraints: BoxConstraints(maxWidth: 300),
       padding: const EdgeInsets.all(8),
@@ -96,5 +97,27 @@ class _TesArteRatingState extends State<TesArteRating> {
         ],
       ),
     );
+  }
+
+  Container _getRatingNonInteractive() {
+    return Container(
+      constraints: BoxConstraints(maxWidth: 300),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(11),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.secondary.withAlpha(100),
+          width: 1
+        )
+      ),
+      child: _getRatingStars()
+    );
+  }
+
+  @override
+  Container build(BuildContext context) {
+    assert(widget.rating == null || widget.rating! >= 0 && widget.rating! <= 5, "Rating must be between 0 and 5 [value = ${widget.rating}]");
+
+    return widget.readOnly ? _getRatingNonInteractive() : _getRatingInteractive();
   }
 }

@@ -8,7 +8,7 @@
 -- ############ --
 
 CREATE TABLE T_USER(
-    a_user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_user_id INTEGER PRIMARY KEY NOT NULL,
     a_username TEXT CHECK (LENGTH(a_username) <= 50) UNIQUE NOT NULL,
     a_first_name TEXT CHECK (LENGTH(a_first_name) <= 100),
     a_last_name TEXT CHECK (LENGTH(a_last_name) <= 150),
@@ -18,7 +18,7 @@ CREATE TABLE T_USER(
 );
 
 CREATE TABLE T_BOOK(
-    a_book_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_book_id INTEGER PRIMARY KEY NOT NULL,
     a_title TEXT CHECK (LENGTH(a_title) <= 200) NOT NULL,
     a_subtitle TEXT CHECK (LENGTH(a_subtitle) <= 200),
     a_published_year INT,
@@ -32,13 +32,13 @@ CREATE TABLE T_BOOK(
 );
 
 CREATE TABLE T_GENRE(
-    a_genre_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_genre_id INTEGER PRIMARY KEY NOT NULL,
     a_name TEXT CHECK (LENGTH(a_name) <= 50) UNIQUE NOT NULL
 );
 
 -- RELATIONAL TABLE --
 CREATE TABLE T_BOOK_GENRE(
-    a_book_genre_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_book_genre_id INTEGER PRIMARY KEY NOT NULL,
     a_book_id INTEGER,
     a_genre_id INTEGER,
     FOREIGN KEY (a_book_id) REFERENCES T_BOOK(a_book_id) ON DELETE CASCADE,
@@ -46,7 +46,7 @@ CREATE TABLE T_BOOK_GENRE(
 );
 
 CREATE TABLE T_QUOTE(
-    a_quote_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_quote_id INTEGER PRIMARY KEY NOT NULL,
     a_book_id INTEGER,
     a_quote TEXT CHECK (LENGTH(a_quote) <= 200) NOT NULL,
     a_chapter TEXT CHECK (LENGTH(a_chapter) <= 150),
@@ -54,7 +54,7 @@ CREATE TABLE T_QUOTE(
 );
 
 CREATE TABLE T_NOTE(
-    a_note_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_note_id INTEGER PRIMARY KEY NOT NULL,
     a_book_id INTEGER,
     a_note TEXT CHECK (LENGTH(a_note) <= 5000) NOT NULL ,
     a_creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -65,15 +65,15 @@ CREATE TABLE T_NOTE(
 -- TODO: T_TAG
 
 CREATE TABLE T_AUTHOR(
-    a_author_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    a_author_id INTEGER PRIMARY KEY NOT NULL,
     a_name TEXT CHECK (LENGTH(a_name) <= 250) UNIQUE NOT NULL,
     a_birth_date DATE
 );
 
 -- RELATIONAL TABLE --
 CREATE TABLE T_BOOK_AUTHOR(
-    a_book_author_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    a_book_id INTEGER,
+    a_book_author_id INTEGER PRIMARY KEY NOT NULL,
+    a_book_id INTEGER NOT NULL,
     a_author_id INTEGER,
     FOREIGN KEY (a_book_id) REFERENCES T_BOOK(a_book_id) ON DELETE CASCADE,
     FOREIGN KEY (a_author_id) REFERENCES T_AUTHOR(a_author_id) ON DELETE SET NULL

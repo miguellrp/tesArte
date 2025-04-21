@@ -55,9 +55,6 @@ class BookPlaceholderPainter extends CustomPainter {
         paint..color = color.withAlpha(150)
     );
 
-    /* Google mark */
-
-
     canvas.restore();
   }
 

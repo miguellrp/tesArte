@@ -7,7 +7,8 @@ class TesArteDBHelper {
     return await openDatabase(
       await _getTesArteDBPath(),
       version: 1,
-      onCreate: (db, version) async => _createTesArteDatabase(db, version)
+      onCreate: (db, version) async => _createTesArteDatabase(db, version),
+      onOpen: (Database database) async => await database.execute('PRAGMA foreign_keys = ON;')
     );
   }
 

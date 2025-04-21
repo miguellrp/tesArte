@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
-import 'package:tesArte/data/domain.dart';
+import 'package:tesArte/data/tesarte_domain.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
+import 'package:tesArte/models/author/author.dart';
 import 'package:tesArte/models/author/book_author.dart';
 import 'package:tesArte/models/book/google_book.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class Book {
   static final String tableName = 't_book';
+
+  static final double bookCoverMiniatureWidth = 128;
+  static final double bookCoverMiniatureHeight = 183;
 
   int? bookId;
   int? userId;
@@ -47,6 +51,7 @@ class Book {
     subtitle = map["a_subtitle"].toString();
     publishedYear = int.tryParse(map["a_published_year"].toString());
     googleBookId = map["a_google_book_id"].toString();
+    authorsList = map["authors"]?.toString().split("#").map((authorName) => BookAuthor(name: authorName)).toList() ?? [];
     description = map["a_description"].toString();
     coverImagePath = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
     rating = double.tryParse(map["a_rating"].toString());
@@ -74,15 +79,30 @@ class Book {
     late int newBookId;
 
     try {
-      newBookId = await tesArteDB.insert(tableName,
-        toMap(),
-        conflictAlgorithm: ConflictAlgorithm.abort,
-      );
-      // if no error on insert, add authors to book:
+      await createAuthors();
+
       if (!errorDB) {
-        for (BookAuthor bookAuthor in authorsList!) {
-          bookAuthor.bookId = newBookId;
-          await bookAuthor.addAuthorToBook();
+        newBookId = await tesArteDB.insert(tableName,
+          toMap(),
+          conflictAlgorithm: ConflictAlgorithm.abort,
+        );
+      }
+
+      // if no error on insert author and book, then link author to book:
+      if (!errorDB) {
+        if (authorsList != null && authorsList!.isNotEmpty) {
+          for (BookAuthor bookAuthor in authorsList!) {
+            bookAuthor.bookId = newBookId;
+            await bookAuthor.addAuthorToBook();
+
+            if (bookAuthor.errorDB) throw Exception(bookAuthor.errorDBType);
+          }
+        } else {
+          final BookAuthor unknownAuthor = BookAuthor(name: "Anónimo"); // TODO: lang
+          unknownAuthor.bookId = newBookId;
+          await unknownAuthor.addAuthorToBook();
+
+          if (unknownAuthor.errorDB) throw Exception(unknownAuthor.errorDBType);
         }
       }
     } catch (exception) {
@@ -121,7 +141,7 @@ class Book {
     int booksDeleted = 0; // TODO: allow multiple deletes
 
     try {
-      booksDeleted = bookId = await tesArteDB.delete(tableName,
+      booksDeleted = await tesArteDB.delete(tableName,
         where: "a_book_id = ?",
         whereArgs: [bookId]
       );
@@ -131,6 +151,32 @@ class Book {
     }
 
     return booksDeleted;
+  }
+
+  Future<int> createAuthors() async {
+    int authorsCreated = 0;
+
+    try {
+      if (authorsList != null && authorsList!.isNotEmpty) {
+        for (BookAuthor bookAuthor in authorsList!) {
+          Author author = Author(name: bookAuthor.name);
+          bookAuthor.authorId = await author.addAuthor();
+
+          if (author.errorDB) throw Exception(author.errorDBType);
+        }
+      } else {
+        Author unknownAuthor = Author(name: "Anónimo"); // TODO: lang
+        unknownAuthor.authorId = await unknownAuthor.addAuthor();
+        authorsList = [BookAuthor(authorId: unknownAuthor.authorId)];
+
+        if (unknownAuthor.errorDB) throw Exception(unknownAuthor.errorDBType);
+      }
+    } catch (exception) {
+      errorDB = true;
+      errorDBType = exception.toString();
+    }
+
+    return authorsCreated;
   }
 
   /* --- GETTERS --- */
@@ -158,8 +204,8 @@ class Book {
     );
   }
 
-  static List<BookAuthor>? _getAuthorsFromGoogleBook(List<dynamic>? authorNames) {
-    List<BookAuthor>? authors;
+  static List<BookAuthor> _getAuthorsFromGoogleBook(List<dynamic>? authorNames) {
+    List<BookAuthor> authors = [];
 
     if (authorNames != null && authorNames.isNotEmpty) {
       authors = authorNames.map((authorName) => BookAuthor(name: authorName)).toList();
@@ -172,7 +218,7 @@ class Book {
     String? description;
 
     if (googleBookDescription.isNotEmptyAndNotNull) {
-      description = googleBookDescription!.length <= Domain.dDescription ? googleBookDescription : googleBookDescription.substring(0, Domain.dDescription);
+      description = googleBookDescription!.length <= TesArteDomain.dDescription ? googleBookDescription : googleBookDescription.substring(0, TesArteDomain.dDescription);
     }
 
     return description;

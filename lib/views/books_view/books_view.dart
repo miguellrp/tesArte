@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:tesArte/common/components/generic/tesarte_divider.dart';
+import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
@@ -22,7 +23,7 @@ class _BooksViewState extends State<BooksView> {
   bool bookshelfInitialized = false;
 
   late TesArteSearchBar tesArteSearchBar;
-  late IconButton searchNewBookButton;
+  late TesArteIconButton searchNewBookButton;
 
   @override
   void initState() {
@@ -31,9 +32,10 @@ class _BooksViewState extends State<BooksView> {
       }
     );
 
-    searchNewBookButton = IconButton(
-      tooltip: "Procurar novo libro", // TODO: lang
+    searchNewBookButton = TesArteIconButton(
+      tooltipText: "Procurar novo libro", // TODO: lang
       icon: Icon(Symbols.globe_book_rounded),
+      padding: 8,
       onPressed: () async {
         bool addedNewBook = await DialogPreviewGoogleBooks.show(context) ?? false;
 
@@ -61,7 +63,7 @@ class _BooksViewState extends State<BooksView> {
       bookshelf.books.forEach((book) => books.add(
         UIBook(
           book: book,
-          onDeleteBook: () => setState(() => bookshelfInitialized = false)
+          onModification: () => setState(() => bookshelfInitialized = false)
         )
       ));
 

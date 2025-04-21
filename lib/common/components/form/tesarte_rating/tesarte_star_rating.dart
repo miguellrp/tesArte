@@ -15,6 +15,8 @@ class TesArteStarRating extends StatefulWidget {
   VoidCallback? onHover;
   VoidCallback? onTap;
 
+  bool readOnly;
+
   TesArteStarRating({super.key,
     this.isHalfStar = false,
     this.isFullStar = false,
@@ -25,7 +27,9 @@ class TesArteStarRating extends StatefulWidget {
     this.isHoveringGroup = false,
 
     this.onHover,
-    this.onTap
+    this.onTap,
+
+    this.readOnly = true
   });
 
   @override
@@ -76,8 +80,7 @@ class _TesArteStarRatingState extends State<TesArteStarRating> {
     }
   }
 
-  @override
-  GestureDetector build(BuildContext context) {
+  GestureDetector _getStarRatingInteractive() {
     return GestureDetector(
       onTap: () => doTapAction(),
       child: MouseRegion(
@@ -104,5 +107,31 @@ class _TesArteStarRatingState extends State<TesArteStarRating> {
         ),
       )
     );
+  }
+
+  Container _getStarRatingNonInteractive() {
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: ShapeDecoration(
+          gradient: LinearGradient(
+            colors: [
+              if (widget.isHoverHalfStar || widget.isHoverFullStar) Theme.of(context).colorScheme.primary
+              else Theme.of(context).colorScheme.secondary,
+
+              Theme.of(context).colorScheme.secondary.withAlpha(150)
+            ],
+            stops: _getGradientStops(),
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          shape: StarBorder(pointRounding: 0.4)
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.readOnly ? _getStarRatingNonInteractive() : _getStarRatingInteractive();
   }
 }

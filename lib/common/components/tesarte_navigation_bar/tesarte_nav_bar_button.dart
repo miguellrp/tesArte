@@ -46,6 +46,8 @@ class TesArteNavBarButton extends StatelessWidget {
       tooltipText: destinationTitle,
       icon: _getDestinationIcon(context),
       onPressed: destinationOnTap,
+      padding: 8,
+      withSquareShape: true
     );
   }
 }

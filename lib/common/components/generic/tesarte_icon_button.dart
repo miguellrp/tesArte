@@ -6,6 +6,8 @@ class TesArteIconButton extends StatefulWidget {
   final String? tooltipText;
 
   final Color? color;
+  final double padding;
+  final bool withSquareShape;
 
   const TesArteIconButton({
     super.key,
@@ -13,7 +15,9 @@ class TesArteIconButton extends StatefulWidget {
     required this.onPressed,
     this.tooltipText,
 
-    this.color
+    this.color,
+    this.padding = 4,
+    this.withSquareShape = false
   });
 
   @override
@@ -52,16 +56,16 @@ class _TesArteIconButtonState extends State<TesArteIconButton> {
       child: IconButton(
         constraints: BoxConstraints(),
         focusNode: _focusButtonNode,
-        padding: const EdgeInsets.all(4),
+        padding: EdgeInsets.all(widget.padding),
         icon: widget.icon,
         color: widget.color??Theme.of(context).colorScheme.secondary,
         onPressed: widget.onPressed,
-        style: _focusButtonNode.hasFocus ? ButtonStyle(
+        style: ButtonStyle(
           shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-            side: BorderSide(color: widget.color??Theme.of(context).colorScheme.secondary)
+            borderRadius: BorderRadius.circular(widget.withSquareShape ? 10 : 30),
+            side: _focusButtonNode.hasFocus ? BorderSide(color: widget.color??Theme.of(context).colorScheme.secondary) : BorderSide.none
           ))
-        ) : null,
+        ),
       ),
     );/*;*/
   }

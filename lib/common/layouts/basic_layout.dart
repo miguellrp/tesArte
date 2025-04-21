@@ -9,7 +9,17 @@ class BasicLayout extends StatefulWidget {
   final bool? showSideBar;
   final bool canPop;
 
-  const BasicLayout({super.key, this.titleView, required this.body, this.showSideBar = true, this.canPop = false});
+  /// [VoidCallback] that will be called when the back button is pressed.
+  final VoidCallback? onBackButtonPressed;
+
+  const BasicLayout({
+    super.key,
+    this.titleView,
+    required this.body,
+    this.showSideBar = true,
+    this.canPop = false,
+    this.onBackButtonPressed
+  });
 
   @override
   State<BasicLayout> createState() => _BasicLayoutState();
@@ -28,7 +38,7 @@ class _BasicLayoutState extends State<BasicLayout> {
     return TesArteIconButton(
       icon: Icon(Icons.arrow_back),
       tooltipText: "Volver", // TODO: lang
-      onPressed: () => Navigator.of(context).pop(),
+      onPressed: () => widget.onBackButtonPressed != null ? widget.onBackButtonPressed!() : Navigator.of(context).pop(),
     );
   }
 

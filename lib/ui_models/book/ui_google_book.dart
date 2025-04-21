@@ -93,6 +93,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
                   TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
                   Navigator.of(context).pop(true);
                 } else {
+                  print(selectedBook.errorDBType);
                   if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
                     TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
                   } else {

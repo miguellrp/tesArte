@@ -32,20 +32,48 @@ class Author {
   }
 
   /* --- CRUD OPERATIONS --- */
-  Future<void> add() async {
+  Future<int?> addAuthor() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
+    final Batch batch = tesArteDB.batch();
+    int? authorId;
+
     try {
-      await tesArteDB.insert(tableName,
+      authorId = await tesArteDB.insert(tableName,
         toMap(),
-        conflictAlgorithm: ConflictAlgorithm.abort,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
       );
+
+      if (authorId == 0) { // if author is already created on DB:
+        final Author existingAuthor = Author(name: name);
+        authorId = await existingAuthor.getAuthorId();
+      }
     } catch (exception) {
       errorDB = true;
       errorDBType = exception.toString();
     }
+
+    return authorId;
   }
 
-  Future<void> delete() async {
+  Future<int?> getAuthorId() async {
+    final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
+    int? authorId;
+
+    try {
+      authorId = (await tesArteDB.query(tableName,
+        columns: ["a_author_id"],
+        where: "a_name = ?",
+        whereArgs: [name]
+      )).first["a_author_id"] as int?;
+    } catch (exception) {
+      errorDB = true;
+      errorDBType = exception.toString();
+    }
+
+    return authorId;
+  }
+
+  Future<void> deleteAuthor() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
     try {
       await tesArteDB.delete(tableName,

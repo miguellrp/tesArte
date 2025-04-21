@@ -3,17 +3,23 @@ import 'package:tesArte/common/components/form/tesarte_rating/tesarte_rating.dar
 import 'package:tesArte/common/components/form/tesarte_save_button.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';
+import 'package:tesArte/data/tesarte_domain.dart';
 import 'package:tesArte/models/book/book.dart';
+import 'package:tesArte/views/books_view/components/form/book_status_form_field.dart';
 
 final double spacing = 20.0;
 
 class FormEditBook extends StatefulWidget {
   final Book book;
 
-  const FormEditBook({super.key, required this.book});
+  FormEditBook({super.key, required this.book});
+
+  final GlobalKey<_FormEditBookState> _formKey = GlobalKey<_FormEditBookState>();
 
   @override
   State<FormEditBook> createState() => _FormEditBookState();
+
+  bool get hasChanges => _formKey.currentState?.formHasChanges ?? false;
 }
 
 class _FormEditBookState extends State<FormEditBook> {
@@ -26,6 +32,7 @@ class _FormEditBookState extends State<FormEditBook> {
 
   late final TesArteTextFormField titleFormField;
   late final TesArteTextFormField subtitleFormField;
+  late final BookStatusFormField bookStatusFormField;
   late final TesArteTextFormField descriptionFormField;
 
   late final TesArteRating bookRating;
@@ -60,10 +67,19 @@ class _FormEditBookState extends State<FormEditBook> {
       onChange: (_) => markFormWithChanges(),
     );
 
+    bookStatusFormField = BookStatusFormField(
+      initialSelection: widget.book.status,
+      onChanged: (value) {
+        widget.book.status = value;
+        markFormWithChanges();
+      }
+    );
+
     descriptionFormField = TesArteTextFormField(
       labelText: "Descripción", // TODO: lang
       textFormFieldType: TextFormFieldType.longText,
       minLines: 5,
+      maxLength: TesArteDomain.dDescription,
       controller: descriptionBookController,
       onChange: (_) => markFormWithChanges(),
     );
@@ -91,6 +107,7 @@ class _FormEditBookState extends State<FormEditBook> {
 
           if (widget.book.errorDB) {
             TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar gardar os cambios"); // TODO: lang
+            print(widget.book.errorDBType);
           } else {
             setState(() => formHasChanges = false);
             TesArteToast.showSuccessToast(message: "Cambios gardados correctamente"); // TODO: lang
@@ -130,6 +147,7 @@ class _FormEditBookState extends State<FormEditBook> {
                   children: [
                     titleFormField,
                     subtitleFormField,
+                    bookStatusFormField
                   ]
                 )
               ],
