@@ -38,7 +38,7 @@ class _BasicLayoutState extends State<BasicLayout> {
     return TesArteIconButton(
       icon: Icon(Icons.arrow_back),
       tooltipText: "Volver", // TODO: lang
-      onPressed: () => widget.onBackButtonPressed != null ? widget.onBackButtonPressed!() : Navigator.of(context).pop(),
+      onPressed: () => widget.onBackButtonPressed != null ? widget.onBackButtonPressed!() : Navigator.pop(context),
     );
   }
 

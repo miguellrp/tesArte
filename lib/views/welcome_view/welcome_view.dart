@@ -48,7 +48,7 @@ class _WelcomePageState extends State<WelcomeView> {
       maxWidth: 350,
       maxLines: 1,
       bordered: false,
-      validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, context: context)
+      validator: (value) => TesArteValidator.doValidation(type: TesArteValidatorType.name, value: value, allowEmpty: false)
     );
 
     super.initState();

@@ -17,7 +17,7 @@ class BookEditView extends StatelessWidget {
     return BasicLayout(
       titleView: book.title.isEmptyOrNull ? "Nuevo libro" : "Edición do libro", // TODO: lang
       canPop: true,
-      onBackButtonPressed: form.hasChanges ? () => Navigator.of(context).pop(true) : null,
+      onBackButtonPressed: form.hasSavedChanges ? () => Navigator.of(context).pop(true) : null,
       body: form
     );
   }

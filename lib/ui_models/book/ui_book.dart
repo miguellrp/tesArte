@@ -33,7 +33,7 @@ class UIBook extends StatelessWidget {
             fit: BoxFit.fill,
           )
           else BookPlaceholder(),
-          Positioned(left: 15, top: 0, child: BookStatusPreview(status: book.status))
+          Positioned(left: 10, top: 0, child: BookStatusPreview(status: book.status))
       ]),
     );
   }
@@ -48,7 +48,7 @@ class UIBook extends StatelessWidget {
         )
       ),
       UtilText.getEllipsizedText(book.authorsList!.map((author) => author.name).join(" | ")),
-      UtilText.getEllipsizedText("[${book.publishedYear}]")
+      UtilText.getEllipsizedText("[${book.publishedYear??"s.f."}]")
     ];
   }
 

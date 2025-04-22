@@ -3,6 +3,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:tesArte/common/components/generic/tesarte_divider.dart';
 import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
+import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/models/book/book_list.dart';
@@ -19,6 +20,7 @@ class BooksView extends StatefulWidget {
 
 class _BooksViewState extends State<BooksView> {
   BookList bookshelf = BookList();
+  String searchTerm = "";
 
   bool bookshelfInitialized = false;
 
@@ -29,6 +31,8 @@ class _BooksViewState extends State<BooksView> {
   void initState() {
     tesArteSearchBar = TesArteSearchBar(
       onSearch: (value) {
+        searchTerm = value;
+        setState(() => bookshelfInitialized = false);
       }
     );
 
@@ -47,7 +51,11 @@ class _BooksViewState extends State<BooksView> {
   }
 
   Future<void> initializeBookshelf() async {
-    if (!bookshelfInitialized) await bookshelf.getFromActiveUser();
+    if (!bookshelfInitialized) await bookshelf.getFromActiveUser(whereParams: [searchTerm, searchTerm]);
+
+    if (bookshelf.errorDB) {
+      TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar obter os libros"); // TODO: lang
+    }
     setState(() => bookshelfInitialized = true);
   }
 

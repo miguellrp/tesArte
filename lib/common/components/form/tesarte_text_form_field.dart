@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 enum TextFormFieldType {
   text,
   password,
-  longText
+  number
 }
 
 typedef StringCallback = String? Function(String?);
@@ -69,6 +69,7 @@ class TesArteTextFormField extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color: Theme.of(context).colorScheme.tertiary,
         ),
+        keyboardType: textFormFieldType == TextFormFieldType.number ? TextInputType.number : TextInputType.text,
         onChanged: onChange != null ? (value) => onChange!(value) : null,
         validator: validator != null ? (value) => validator!(value) : null,
         maxLength: maxLength,
