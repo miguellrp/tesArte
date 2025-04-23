@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tesArte/app_config/router.dart';
 import 'package:tesArte/common/components/form/tesarte_rating/tesarte_star_rating.dart';
 import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 

@@ -7,7 +7,7 @@ import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/models/book/book.dart';
 import 'package:tesArte/models/book/google_book.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
-import 'package:tesArte/views/books_view/dialogs/dialog_description_google_book.dart';
+import 'package:tesArte/views/your_books_view/dialogs/dialog_description_google_book.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIGoogleBook extends StatefulWidget {
@@ -93,7 +93,6 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
                   TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
                   Navigator.of(context).pop(true);
                 } else {
-                  print(selectedBook.errorDBType);
                   if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
                     TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
                   } else {

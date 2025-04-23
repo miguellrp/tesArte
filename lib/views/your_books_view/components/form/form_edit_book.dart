@@ -7,7 +7,7 @@ import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/data/tesarte_domain.dart';
 import 'package:tesArte/models/book/book.dart';
-import 'package:tesArte/views/books_view/components/form/book_status_form_field.dart';
+import 'package:tesArte/views/your_books_view/components/form/book_status_form_field.dart';
 
 final double spacing = 20.0;
 
@@ -146,7 +146,7 @@ class _FormEditBookState extends State<FormEditBook> {
     return Form(
       key: formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           spacing: spacing,
@@ -177,7 +177,6 @@ class _FormEditBookState extends State<FormEditBook> {
               ],
             ),
             descriptionFormField,
-            publishedYearFormField,
             getSaveButton()
           ]
         ),

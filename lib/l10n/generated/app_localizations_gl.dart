@@ -30,7 +30,7 @@ class AppLocalizationsGl extends AppLocalizations {
   String get home => 'Inicio';
 
   @override
-  String get myBooks => 'Os meus libros';
+  String get yourBooks => 'Os teus libros';
 
   @override
   String get usernameAlreadyInUse => 'O nome de usuario xa se atopa en uso';

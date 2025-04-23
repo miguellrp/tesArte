@@ -9,8 +9,8 @@ import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.da
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/models/book/book.dart';
-import 'package:tesArte/views/books_view/book_edit_view.dart';
-import 'package:tesArte/views/books_view/components/book_status_preview.dart';
+import 'package:tesArte/views/your_books_view/book_edit_view.dart';
+import 'package:tesArte/views/your_books_view/components/book_status_preview.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIBook extends StatelessWidget {

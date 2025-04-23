@@ -107,7 +107,7 @@ final TextTheme tesArteTextTheme = TextTheme(
 
 // --- ☀️ LIGHT COLOR SCHEME ☀️ ---
 final ColorScheme lightColorScheme = ColorScheme(
-  primary: Color(0xFFA04747),
+  primary: Color(0xFFAD4D4D),
   onPrimary: Color(0xFFECDAB6),
 
   secondary: Color(0xFFD98324),
@@ -129,7 +129,7 @@ final ColorScheme lightColorScheme = ColorScheme(
 
 // --- 🌙 DARK COLOR SCHEME 🌙️ ---
 final ColorScheme darkColorScheme = ColorScheme(
-  primary: Color(0xFFA04747),
+  primary: Color(0xFFAD4D4D),
   onPrimary: Color(0xFFECDAB6),
 
   secondary: Color(0xFFD8A25E),

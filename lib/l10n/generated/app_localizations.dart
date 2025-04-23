@@ -139,11 +139,11 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
-  /// No description provided for @myBooks.
+  /// No description provided for @yourBooks.
   ///
   /// In en, this message translates to:
-  /// **'My books'**
-  String get myBooks;
+  /// **'Your books'**
+  String get yourBooks;
 
   /// No description provided for @usernameAlreadyInUse.
   ///

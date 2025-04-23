@@ -132,7 +132,6 @@ class Book {
       errorDB = true;
 
       if (errorDBType.isEmptyOrNull) errorDBType = exception.toString();
-      print(errorDBType);
     }
   }
 

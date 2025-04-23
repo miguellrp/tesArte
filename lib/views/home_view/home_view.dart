@@ -15,7 +15,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   BasicLayout build(BuildContext context) {
     return BasicLayout(
-      titleView: "A miña actividade recente", // TODO: lang
+      titleView: "A túa actividade recente", // TODO: lang
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

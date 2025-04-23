@@ -6,19 +6,20 @@ import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
+import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:tesArte/models/book/book_list.dart';
 import 'package:tesArte/ui_models/book/ui_book.dart';
-import 'package:tesArte/views/books_view/dialogs/dialog_preview_google_books.dart';
+import 'package:tesArte/views/your_books_view/dialogs/dialog_preview_google_books.dart';
 
-class BooksView extends StatefulWidget {
-  static const String route = "/books";
-  const BooksView({super.key});
+class YourBooksView extends StatefulWidget {
+  static const String route = "/your_books";
+  const YourBooksView({super.key});
 
   @override
-  State<BooksView> createState() => _BooksViewState();
+  State<YourBooksView> createState() => _YourBooksViewState();
 }
 
-class _BooksViewState extends State<BooksView> {
+class _YourBooksViewState extends State<YourBooksView> {
   BookList bookshelf = BookList();
   String searchTerm = "";
 
@@ -31,8 +32,10 @@ class _BooksViewState extends State<BooksView> {
   void initState() {
     tesArteSearchBar = TesArteSearchBar(
       onSearch: (value) {
-        searchTerm = value;
-        setState(() => bookshelfInitialized = false);
+        if (searchTerm != value) {
+          searchTerm = value;
+          setState(() => bookshelfInitialized = false);
+        }
       }
     );
 
@@ -51,11 +54,14 @@ class _BooksViewState extends State<BooksView> {
   }
 
   Future<void> initializeBookshelf() async {
-    if (!bookshelfInitialized) await bookshelf.getFromActiveUser(whereParams: [searchTerm, searchTerm]);
+    if (!bookshelfInitialized) {
+      await bookshelf.getFromActiveUser(whereParams: [searchTerm, searchTerm]);
 
-    if (bookshelf.errorDB) {
-      TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar obter os libros"); // TODO: lang
+      if (bookshelf.errorDB) {
+        TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar obter os libros"); // TODO: lang
+      }
     }
+
     setState(() => bookshelfInitialized = true);
   }
 
@@ -75,14 +81,11 @@ class _BooksViewState extends State<BooksView> {
         )
       ));
 
-      bookshelfContent = SingleChildScrollView(
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          direction: Axis.horizontal,
-          spacing: 10,
-          runSpacing: 10,
-          children: books
-        ),
+      bookshelfContent = Wrap(
+        direction: Axis.horizontal,
+        spacing: 10,
+        runSpacing: 10,
+        children: books
       );
     }
 
@@ -94,10 +97,9 @@ class _BooksViewState extends State<BooksView> {
     initializeBookshelf();
 
     return BasicLayout(
-      titleView: "Os meus libros", // TODO: lang
+      titleView: AppLocalizations.of(context)!.yourBooks,
       body: Column(
         mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 20,
         children: [
           Row(
@@ -110,7 +112,13 @@ class _BooksViewState extends State<BooksView> {
             ]
           ),
           TesArteDivider(),
-          Expanded(child: bookshelfInitialized ? _getBookshelf() : TesArteLoader())
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+              child: bookshelfInitialized ? SingleChildScrollView(child: _getBookshelf()) : TesArteLoader()
+            )
+          )
         ],
       )
     );

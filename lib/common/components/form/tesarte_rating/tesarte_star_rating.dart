@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_mask_painter.dart';
 
 class TesArteStarRating extends StatefulWidget {
   // booleans to SAVE state of star

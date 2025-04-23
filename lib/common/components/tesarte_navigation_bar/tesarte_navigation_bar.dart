@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tesArte/common/components/tesarte_navigation_bar/tesarte_nav_bar_button.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:tesArte/common/components/tesarte_navigation_bar/tesarte_nav_bar_tile.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
 import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
-import 'package:tesArte/views/books_view/books_view.dart';
+import 'package:tesArte/views/book_authors_view/book_authors_view.dart';
+import 'package:tesArte/views/your_books_view/your_books_view.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
 
 class TesArteNavigationBar extends StatefulWidget {
+  static final double navigationBarExtendedWidth = 250;
+
   const TesArteNavigationBar({
     super.key,
   });
@@ -18,41 +22,49 @@ class TesArteNavigationBar extends StatefulWidget {
 
 class _TesArteNavigationBarState extends State<TesArteNavigationBar> {
   bool navBarExtended = true;
+  String? currentRoute;
 
   @override
   void didChangeDependencies() {
     navBarExtended = !UtilViewport.isNarrowScreen(context);
+    currentRoute = GoRouterState.of(context).uri.toString();
+
     super.didChangeDependencies();
   }
 
-  List<TesArteNavBarButton> _getNavBarButtons() {
-    final String currentRoute = GoRouterState.of(context).uri.toString();
-
-    return [
-      TesArteNavBarButton(
-        destinationIcon: Icons.home_filled,
-        destinationTitle: AppLocalizations.of(context)!.home,
-        selected: currentRoute == HomeView.route,
-        navBarExtended: navBarExtended,
-        destinationOnTap: () => context.go(HomeView.route)
-      ),
-      TesArteNavBarButton(
-        destinationIcon: Icons.book,
-        destinationTitle: AppLocalizations.of(context)!.myBooks,
-        selected: currentRoute == BooksView.route,
-        navBarExtended: navBarExtended,
-        destinationOnTap: () => context.go(BooksView.route)
-      )
-    ];
+  Column _getNavBarTiles() {
+    return Column(
+      spacing: 5,
+      children: [
+        TesArteNavBarTile(
+          navBarExtended: navBarExtended,
+          destinationTile: TesArteNavBarDestinationTile(
+              icon: Icons.home_filled,
+              title: AppLocalizations.of(context)!.home,
+              route: HomeView.route,
+              selected: currentRoute == HomeView.route,
+              onTap: () => context.go(HomeView.route)
+          )
+        ),
+        TesArteNavBarTile(
+          navBarExtended: navBarExtended,
+          destinationTile: TesArteNavBarDestinationTile(
+            icon: Icons.book,
+            title: AppLocalizations.of(context)!.yourBooks,
+            selected: currentRoute == YourBooksView.route,
+            onTap: () => context.go(YourBooksView.route)
+          )
+        )
+      ],
+    );
   }
 
   @override
   AnimatedContainer build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
-      constraints: BoxConstraints(maxWidth: navBarExtended ? 250 : 70),
+      constraints: BoxConstraints(maxWidth: navBarExtended ? TesArteNavigationBar.navigationBarExtendedWidth : 70),
       color: Theme.of(context).colorScheme.surfaceTint.withAlpha(150),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         spacing: 10,
@@ -60,7 +72,7 @@ class _TesArteNavigationBarState extends State<TesArteNavigationBar> {
           if (navBarExtended) Text(TesArteSession.instance.getActiveUser()!.userName!),
           const Placeholder(child: SizedBox(height: 40, width: 80)),
           Divider(),
-          ..._getNavBarButtons()
+          _getNavBarTiles()
         ],
       ),
     );

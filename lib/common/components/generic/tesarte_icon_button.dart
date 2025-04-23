@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TesArteIconButton extends StatefulWidget {
   final Icon icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String? tooltipText;
 
   final Color? color;
@@ -12,7 +12,7 @@ class TesArteIconButton extends StatefulWidget {
   const TesArteIconButton({
     super.key,
     required this.icon,
-    required this.onPressed,
+    this.onPressed,
     this.tooltipText,
 
     this.color,
@@ -50,9 +50,7 @@ class _TesArteIconButtonState extends State<TesArteIconButton> {
   @override
   Tooltip build(BuildContext context) {
     return Tooltip(
-      key: _tooltipKey,
       message: widget.tooltipText??"",
-      triggerMode: TooltipTriggerMode.manual,
       child: IconButton(
         constraints: BoxConstraints(),
         focusNode: _focusButtonNode,
@@ -67,6 +65,6 @@ class _TesArteIconButtonState extends State<TesArteIconButton> {
           ))
         ),
       ),
-    );/*;*/
+    );
   }
 }

@@ -34,7 +34,6 @@ class Author {
   /* --- CRUD OPERATIONS --- */
   Future<int?> addAuthor() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
-    final Batch batch = tesArteDB.batch();
     int? authorId;
 
     try {

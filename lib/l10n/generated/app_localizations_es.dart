@@ -30,7 +30,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get home => 'Inicio';
 
   @override
-  String get myBooks => 'Mis libros';
+  String get yourBooks => 'Tus libros';
 
   @override
   String get usernameAlreadyInUse => 'El nombre de usuario ya está en uso';

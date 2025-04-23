@@ -13,7 +13,6 @@ class _DialogPreviewGoogleBooksWidget extends StatefulWidget {
 }
 
 class _DialogPreviewGoogleBooksWidgetState extends State<_DialogPreviewGoogleBooksWidget> {
-  String? _termSearched;
   Future<List<GoogleBook>>? _futureBooks;
 
   @override
@@ -31,8 +30,7 @@ class _DialogPreviewGoogleBooksWidgetState extends State<_DialogPreviewGoogleBoo
             Text("Procurar novo libro", style: TextTheme.of(context).titleMedium), // TODO: lang
             TesArteSearchBar(
               onSearch: (value) => setState(() {
-                _termSearched = value;
-                if (_termSearched.isNotEmptyAndNotNull) _futureBooks = GoogleBook.fetchFromAPI(term: _termSearched!, limit: 10);
+                if (value.isNotEmptyAndNotNull) _futureBooks = GoogleBook.fetchFromAPI(term: value, limit: 10);
               })
             ),
             Expanded(
@@ -44,7 +42,6 @@ class _DialogPreviewGoogleBooksWidgetState extends State<_DialogPreviewGoogleBoo
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return TesArteLoader();
                   } else if (snapshot.hasError) {
-                    print(snapshot.error);
                     return Text(
                       "Ocurriu un erro ó intentar procurar libros",
                       style: TextStyle(

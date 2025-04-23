@@ -46,7 +46,7 @@ class _BasicLayoutState extends State<BasicLayout> {
     return Text(widget.titleView!,
       textAlign: TextAlign.center,
       style: TextTheme.of(context).displayMedium!.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary
+        color: Theme.of(context).colorScheme.onPrimary
       )
     );
   }
@@ -65,7 +65,7 @@ class _BasicLayoutState extends State<BasicLayout> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   if (widget.canPop) Align(alignment: Alignment.topLeft, child: _getBackButton()),
-                  _getTitleView(),
+                  Container(margin: const EdgeInsets.only(bottom: 15), child: _getTitleView()),
                   Expanded(child: widget.body)
                 ],
               )

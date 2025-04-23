@@ -1,5 +1,4 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:tesArte/models/author/author.dart';
 

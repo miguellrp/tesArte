@@ -56,7 +56,7 @@ class ModelList<T> {
 
   Iterable<T> where(bool Function(T element) test) => _modelList.where(test);
 
-  Iterable<T> whereType<T>() => _modelList.whereType<T>();
+  Iterable<T> whereType() => _modelList.whereType<T>();
 
   Iterable<T> skip(int count) => _modelList.skip(count);
 

@@ -7,15 +7,16 @@ void main() {
 }
 
 class TesArteLoader extends StatefulWidget {
+  const TesArteLoader({super.key});
+
   @override
-  _TesArteLoaderState createState() => _TesArteLoaderState();
+  TesArteLoaderState createState() => TesArteLoaderState();
 }
 
-class _TesArteLoaderState extends State<TesArteLoader>
+class TesArteLoaderState extends State<TesArteLoader>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _loopAnimation;
-  late final CurvedAnimation _fadeAnimation;
 
   @override
   void initState() {
