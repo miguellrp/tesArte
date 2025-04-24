@@ -82,10 +82,10 @@ class _YourBooksViewState extends State<YourBooksView> {
       ));
 
       bookshelfContent = Wrap(
-        direction: Axis.horizontal,
+        direction: Axis.vertical,
         spacing: 10,
         runSpacing: 10,
-        children: books
+        children: [...books, TesArteIconButton(icon: Icon(Icons.add), tooltipText: "AAA", onPressed: () => DialogPreviewGoogleBooks.show(context))]
       );
     }
 
