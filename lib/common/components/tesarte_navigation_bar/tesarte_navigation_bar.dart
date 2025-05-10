@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:tesArte/common/components/tesarte_navigation_bar/tesarte_nav_bar_tile.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
 import 'package:tesArte/l10n/generated/app_localizations.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
-import 'package:tesArte/views/book_authors_view/book_authors_view.dart';
 import 'package:tesArte/views/your_books_view/your_books_view.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
 

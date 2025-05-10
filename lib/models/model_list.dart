@@ -1,15 +1,18 @@
 import 'dart:math';
 
-class ModelList<T> {
+class ModelList<T> extends Iterable<T> {
   final List<T> _modelList;
 
   ModelList({List<T>? modelList}) : _modelList = modelList ?? [];
 
   /* --- List extended methods --- */
+  @override
   int get length => _modelList.length;
 
+  @override
   bool get isEmpty => _modelList.isEmpty;
 
+  @override
   bool get isNotEmpty => _modelList.isNotEmpty;
 
   T operator [](int index) => _modelList[index];
@@ -22,7 +25,8 @@ class ModelList<T> {
 
   void clear() => _modelList.clear();
 
-  bool contains(T? element) => _modelList.contains(element);
+  @override
+  bool contains(Object? element) => _modelList.contains(element);
 
   void insert(int index, T element) => _modelList.insert(index, element);
 
@@ -40,34 +44,48 @@ class ModelList<T> {
 
   void shuffle([Random? random]) => _modelList.shuffle(random);
 
+  @override
   List<T> toList({bool growable = true}) => _modelList.toList(growable: growable);
 
+  @override
   Set<T> toSet() => _modelList.toSet();
 
+  @override
   T get first => _modelList.first;
 
+  @override
   T get last => _modelList.last;
 
+  @override
   T get single => _modelList.single;
 
+  @override
   T elementAt(int index) => _modelList.elementAt(index);
 
   Iterable<T> get reversed => _modelList.reversed;
 
+  @override
   Iterable<T> where(bool Function(T element) test) => _modelList.where(test);
 
-  Iterable<T> whereType() => _modelList.whereType<T>();
+  @override
+  Iterable<R> whereType<R>() => _modelList.whereType<R>();
 
+  @override
   Iterable<T> skip(int count) => _modelList.skip(count);
 
+  @override
   Iterable<T> take(int count) => _modelList.take(count);
 
+  @override
   Iterable<T> skipWhile(bool Function(T value) test) => _modelList.skipWhile(test);
 
+  @override
   Iterable<T> takeWhile(bool Function(T value) test) => _modelList.takeWhile(test);
 
+  @override
   Iterable<T> followedBy(Iterable<T> other) => _modelList.followedBy(other);
 
+  @override
   void forEach(void Function(T element) action) => _modelList.forEach(action);
 
   Iterable<T> getRange(int start, int end) => _modelList.getRange(start, end);
@@ -80,12 +98,16 @@ class ModelList<T> {
 
   int lastIndexWhere(bool Function(T element) test, [int? start]) => _modelList.lastIndexWhere(test, start);
 
+  @override
   T lastWhere(bool Function(T element) test, {T Function()? orElse}) => _modelList.lastWhere(test, orElse: orElse);
 
+  @override
   T firstWhere(bool Function(T element) test, {T Function()? orElse}) => _modelList.firstWhere(test, orElse: orElse);
 
+  @override
   T singleWhere(bool Function(T element) test, {T Function()? orElse}) => _modelList.singleWhere(test, orElse: orElse);
 
+  @override
   String join([String separator = ""]) => _modelList.join(separator);
 
   void fillRange(int start, int end, [T? fillValue]) => _modelList.fillRange(start, end, fillValue);
@@ -100,19 +122,25 @@ class ModelList<T> {
 
   void setRange(int start, int end, Iterable<T> iterable, [int skipCount = 0]) => _modelList.setRange(start, end, iterable, skipCount);
 
-  Iterable<T> map<Object>(T Function(T e) toElement) => _modelList.map(toElement);
+  @override
+  Iterable<R> map<R>(R Function(T e) toElement) => _modelList.map(toElement);
 
-  Iterable<T> expand<Object>(Iterable<T> Function(T element) toElements) => _modelList.expand(toElements);
+  @override
+  Iterable<R> expand<R>(Iterable<R> Function(T element) toElements) => _modelList.expand(toElements);
 
-  T fold<Object>(T initialValue, T Function(T previousValue, T element) combine) => _modelList.fold(initialValue, combine);
+  @override
+  R fold<R>(R initialValue, R Function(R previousValue, T element) combine) => _modelList.fold(initialValue, combine);
 
+  @override
   T reduce(T Function(T value, T element) combine) => _modelList.reduce(combine);
 
   Map<int, T> asMap() => _modelList.asMap();
 
+  @override
   List<R> cast<R>() => _modelList.cast<R>();
 
   List<T> operator +(List<T> other) => _modelList + other;
 
+  @override
   Iterator<T> get iterator => _modelList.iterator;
 }

@@ -53,7 +53,7 @@ class _TesArteTooltipState extends State<TesArteTooltip> {
           final bool isTooltipOffscreenX = (position.dx + tesArteTooltipText!.width) > MediaQuery.of(context).size.width;
 
           return Positioned(
-            top: isTooltipOffscreenX ? position.dy + (position.dy - (position.dy * (60 / 100))) : position.dy + (targetRenderBox.size.height / 2) - (tesArteTooltipText!.height / 2),
+            top: isTooltipOffscreenX ? position.dy + targetRenderBox.size.height + 5 : position.dy + (targetRenderBox.size.height / 2) - (tesArteTooltipText!.height / 2),
             left: isTooltipOffscreenX ? position.dx + (targetRenderBox.size.width / 2) - (tesArteTooltipText!.width / 2) : position.dx + (targetRenderBox.size.width + 10),
             child: tesArteTooltipText ?? SizedBox.shrink(),
           );

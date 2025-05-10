@@ -1,6 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 
+enum AuthorType {
+  generic,  // -1
+  book,     // 0
+  film,     // 1
+  series    // 2
+}
+
 class Author {
   static final String tableName = 't_author';
 
@@ -32,9 +39,8 @@ class Author {
   }
 
   /* --- CRUD OPERATIONS --- */
-  Future<int?> addAuthor() async {
+  Future<void> createAuthor() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
-    int? authorId;
 
     try {
       authorId = await tesArteDB.insert(tableName,
@@ -50,8 +56,6 @@ class Author {
       errorDB = true;
       errorDBType = exception.toString();
     }
-
-    return authorId;
   }
 
   Future<int?> getAuthorId() async {

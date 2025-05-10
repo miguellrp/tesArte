@@ -31,7 +31,7 @@ class TesArteMaskPainter extends CustomPainter {
     path.lineTo(size.width, size.height);
 
     path.arcTo(
-      Rect.fromLTRB(0, size.height - 50, size.width, size.height + 10),
+      Rect.fromLTRB(0, size.height - (size.height / 2), size.width, size.height + (size.height / 4)),
       0,
       pi,
       false

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tesArte/app_config/router.dart';
+import 'package:tesArte/common/utils/util_style.dart';
 import 'package:tesArte/views/your_books_view/util_book.dart';
 
 class BookStatusFormField extends StatefulWidget {
@@ -26,7 +27,7 @@ class _BookStatusFormFieldState extends State<BookStatusFormField> {
     super.initState();
     selectedValue = widget.initialSelection ?? 0;
 
-    labelColor = Theme.of(navigatorKey.currentContext!).colorScheme.onPrimary.withAlpha(160);
+    labelColor = Theme.of(navigatorKey.currentContext!).colorScheme.onPrimary.withAlpha(200);
 
     labelText = Text("Estado da lectura:", // TODO: lang
       style: Theme.of(navigatorKey.currentContext!).textTheme.labelLarge!.copyWith(color: labelColor),
@@ -53,7 +54,6 @@ class _BookStatusFormFieldState extends State<BookStatusFormField> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -64,12 +64,10 @@ class _BookStatusFormFieldState extends State<BookStatusFormField> {
       children: [
         labelText,
         Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: labelColor),
-            borderRadius: BorderRadius.circular(10),
-          ),
+          decoration: UtilStyle.getFormFieldDecoration(),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
+              borderRadius: BorderRadius.circular(5),
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               items: _getStatusItems(),

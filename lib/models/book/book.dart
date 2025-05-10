@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
+import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/data/tesarte_domain.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
-import 'package:tesArte/models/author/author.dart';
-import 'package:tesArte/models/author/book_author.dart';
 import 'package:tesArte/models/book/google_book.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -26,8 +25,6 @@ class Book {
   double? rating;
   int? status; // 0 → TO BE READ, 1 → READING, 2 → READ
 
-  List<BookAuthor>? authorsList;
-
   bool errorDB = false;
   String? errorDBType;
 
@@ -37,7 +34,6 @@ class Book {
     this.subtitle,
     this.publishedYear,
     this.googleBookId,
-    this.authorsList,
     this.description,
     this.coverImagePath,
     this.rating,
@@ -47,15 +43,14 @@ class Book {
   Book.fromMap(Map<String, dynamic> map) {
     bookId = int.parse(map["a_book_id"].toString());
     userId = int.parse(map["a_user_id"].toString());
-    title = map["a_title"].toString();
-    subtitle = map["a_subtitle"].toString();
-    publishedYear = int.tryParse(map["a_published_year"].toString());
-    googleBookId = map["a_google_book_id"].toString();
-    authorsList = map["authors"]?.toString().split("#").map((authorName) => BookAuthor(name: authorName)).toList() ?? [];
-    description = map["a_description"].toString();
+    title = map["a_title"]?.toString();
+    subtitle = map["a_subtitle"]?.toString();
+    publishedYear = UtilText.isIntegerNumber(map["a_published_year"].toString()) ? int.parse(map["a_published_year"].toString()) : null;
+    googleBookId = map["a_google_book_id"]?.toString();
+    description = map["a_description"]?.toString();
     coverImagePath = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
-    rating = double.tryParse(map["a_rating"].toString());
-    status = int.tryParse(map["a_status"].toString());
+    rating = UtilText.isNumeric(map["a_rating"].toString()) ? double.parse(map["a_rating"].toString()) : null;
+    status = UtilText.isIntegerNumber(map["a_status"].toString()) ? int.parse(map["a_status"].toString()) : 0;
   }
 
   Map<String, Object?> toMap() {
@@ -76,34 +71,13 @@ class Book {
   /* --- CRUD OPERATIONS --- */
   Future<void> add() async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
-    late int newBookId;
 
     try {
-      await createAuthors();
-
       if (!errorDB) {
-        newBookId = await tesArteDB.insert(tableName,
+        bookId = await tesArteDB.insert(tableName,
           toMap(),
           conflictAlgorithm: ConflictAlgorithm.abort,
         );
-      }
-
-      // if no error on insert author and book, then link author to book:
-      if (!errorDB) {
-        if (authorsList != null && authorsList!.isNotEmpty) {
-          for (BookAuthor bookAuthor in authorsList!) {
-            bookAuthor.bookId = newBookId;
-            await bookAuthor.addAuthorToBook();
-
-            if (bookAuthor.errorDB) throw Exception(bookAuthor.errorDBType);
-          }
-        } else {
-          final BookAuthor unknownAuthor = BookAuthor(name: "Anónimo"); // TODO: lang
-          unknownAuthor.bookId = newBookId;
-          await unknownAuthor.addAuthorToBook();
-
-          if (unknownAuthor.errorDB) throw Exception(unknownAuthor.errorDBType);
-        }
       }
     } catch (exception) {
       errorDB = true;
@@ -152,32 +126,6 @@ class Book {
     return booksDeleted;
   }
 
-  Future<int> createAuthors() async {
-    int authorsCreated = 0;
-
-    try {
-      if (authorsList != null && authorsList!.isNotEmpty) {
-        for (BookAuthor bookAuthor in authorsList!) {
-          Author author = Author(name: bookAuthor.name);
-          bookAuthor.authorId = await author.addAuthor();
-
-          if (author.errorDB) throw Exception(author.errorDBType);
-        }
-      } else {
-        Author unknownAuthor = Author(name: "Anónimo"); // TODO: lang
-        unknownAuthor.authorId = await unknownAuthor.addAuthor();
-        authorsList = [BookAuthor(authorId: unknownAuthor.authorId)];
-
-        if (unknownAuthor.errorDB) throw Exception(unknownAuthor.errorDBType);
-      }
-    } catch (exception) {
-      errorDB = true;
-      errorDBType = exception.toString();
-    }
-
-    return authorsCreated;
-  }
-
   /* --- GETTERS --- */
   ClipRRect getCoverImage() {
     return ClipRRect(
@@ -197,20 +145,9 @@ class Book {
       subtitle: googleBook.subtitle,
       publishedYear: googleBook.publishedYear,
       googleBookId: googleBook.id,
-      authorsList: _getAuthorsFromGoogleBook(googleBook.authors),
       description: _shortenDescriptionFromGoogleBook(googleBook.description),
       coverImagePath: googleBook.coverImageUrl
     );
-  }
-
-  static List<BookAuthor> _getAuthorsFromGoogleBook(List<dynamic>? authorNames) {
-    List<BookAuthor> authors = [];
-
-    if (authorNames != null && authorNames.isNotEmpty) {
-      authors = authorNames.map((authorName) => BookAuthor(name: authorName)).toList();
-    }
-
-    return authors;
   }
 
   static String? _shortenDescriptionFromGoogleBook(String? googleBookDescription) {

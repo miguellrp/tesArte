@@ -9,7 +9,7 @@ class GoogleBook {
   final String? subtitle;
   final String? publisherName;
   final int? publishedYear;
-  final List<dynamic>? authors;
+  final List<dynamic>? authorsNames;
   final String? description;
   final String? coverImageUrl;
 
@@ -21,7 +21,7 @@ class GoogleBook {
     this.subtitle,
     this.publisherName,
     this.publishedYear,
-    this.authors,
+    this.authorsNames,
     this.description,
     this.coverImageUrl,
 
@@ -66,7 +66,7 @@ class GoogleBook {
       publisherName: dataFetched["publisher"],
       publishedYear: _parsePublishedYearFromAPI(dataFetched["publishedDate"]),
 
-      authors: dataFetched["authors"],
+      authorsNames: dataFetched["authors"],
       description: dataFetched["description"],
       coverImageUrl: dataFetched["imageLinks"]?["thumbnail"],
 

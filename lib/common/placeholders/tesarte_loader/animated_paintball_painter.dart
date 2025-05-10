@@ -23,7 +23,7 @@ class AnimatedPaintballPainter extends CustomPainter {
 
     final double progress = animation.value;
     final double distance = progress * pathMetric.length;
-    double radiusBubble = 9;
+    double radiusBubble = size.width / 6;
     Tangent? tangent = pathMetric.getTangentForOffset(distance);
 
     if (tangent != null) {

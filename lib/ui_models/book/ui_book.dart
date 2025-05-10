@@ -8,48 +8,81 @@ import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
+import 'package:tesArte/models/author/book/book_author_list.dart';
 import 'package:tesArte/models/book/book.dart';
 import 'package:tesArte/views/your_books_view/book_edit_view.dart';
 import 'package:tesArte/views/your_books_view/components/book_status_preview.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class UIBook extends StatelessWidget {
+class UIBook extends StatefulWidget {
   final Book book;
   /// [VoidCallback] that will be called when the book is modified or deleted.
   final VoidCallback? onModification;
+
   const UIBook({super.key, required this.book, this.onModification});
 
+  @override
+  State<UIBook> createState() => _UIBookState();
+}
+
+class _UIBookState extends State<UIBook> {
+  late final ClipRRect bookCoverImage;
+  late final Align bookActionButtons;
+
+  List<Widget>? bookData;
+
+  @override
+  void initState() {
+    bookCoverImage = _getCoverImage();
+    bookActionButtons = _getActionButtons();
+    initializeBookData();
+
+    super.initState();
+  }
+
+  void initializeBookData() async {
+    bookData ??= await _getDataBook(context);
+    setState(() {});
+  }
 
   ClipRRect _getCoverImage() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Stack(
         children: [
-          if (book.coverImagePath.isNotEmptyAndNotNull) FadeInImage.memoryNetwork(
+          if (widget.book.coverImagePath.isNotEmptyAndNotNull) FadeInImage.memoryNetwork(
             placeholder: kTransparentImage,
-            image: book.coverImagePath!,
+            image: widget.book.coverImagePath!,
             width: Book.bookCoverMiniatureWidth,
             height: Book.bookCoverMiniatureHeight,
             fit: BoxFit.fill,
           )
           else BookPlaceholder(),
-          Positioned(left: 10, top: 0, child: BookStatusPreview(status: book.status))
+          Positioned(left: 10, top: 0, child: BookStatusPreview(status: widget.book.status))
       ]),
     );
   }
 
-  List<Widget> _getDataBook(BuildContext context) {
-    return [
-      UtilText.getEllipsizedText(book.title!,
-        maxLines: 2,
-        style: TextTheme.of(context).titleSmall!.copyWith(
-          fontStyle: FontStyle.italic,
-          color: Theme.of(context).colorScheme.secondary.withAlpha(170)
-        )
-      ),
-      UtilText.getEllipsizedText(book.authorsList!.map((author) => author.name).join(" | ")),
-      UtilText.getEllipsizedText("[${book.publishedYear??"s.f."}]")
-    ];
+  Future<List<Widget>> _getDataBook(BuildContext context) async {
+    List<Widget> dataBookWidgets = [];
+    final BookAuthorList bookAuthorsList = BookAuthorList();
+    await bookAuthorsList.getFromBook(book: widget.book);
+
+    if (navigatorKey.currentContext!.mounted) {
+      dataBookWidgets = [
+        UtilText.getEllipsizedText(widget.book.title!,
+          maxLines: 2,
+          style: TextTheme.of(context).titleSmall!.copyWith(
+            fontStyle: FontStyle.italic,
+            color: Theme.of(context).colorScheme.secondary.withAlpha(170)
+          )
+        ),
+        UtilText.getEllipsizedText(bookAuthorsList.getAllNames().join(" | ")),
+        UtilText.getEllipsizedText("[${widget.book.publishedYear??"s.f."}]")
+      ];
+    }
+
+    return dataBookWidgets;
   }
 
   Align _getActionButtons() {
@@ -80,9 +113,9 @@ class UIBook extends StatelessWidget {
   }
 
   void doEditAction() async {
-    bool didChange = await navigatorKey.currentContext!.push(BookEditView.route, extra: book)??false;
+    bool didChange = await navigatorKey.currentContext!.push(BookEditView.route, extra: widget.book)??false;
 
-    if (didChange && onModification != null) onModification!();
+    if (didChange && widget.onModification != null) widget.onModification!();
   }
 
   void doDeleteAction() async {
@@ -90,15 +123,15 @@ class UIBook extends StatelessWidget {
       dialogType: TesArteDialogType.warning,
       titleDialog: "Eliminar libro", // TODO: lang
       subtitleDialog: "Vaise eliminar o siguiente libro do teu estante:", // TODO: lang
-      coloredText: book.title
+      coloredText: widget.book.title
     ) ?? false;
 
     if (confirmDeleteBook) {
-      final int booksDeleted = await book.deleteBook();
+      final int booksDeleted = await widget.book.deleteBook();
 
-      if (!book.errorDB && booksDeleted == 1) {
+      if (!widget.book.errorDB && booksDeleted == 1) {
         TesArteToast.showSuccessToast(message: "Eliminouse correctamente o libro do teu estante"); // TODO: lang
-        if (onModification != null) onModification!();
+        if (widget.onModification != null) widget.onModification!();
       } else {
         TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar eliminar o libro do teu estante"); // TODO: lang
       }
@@ -120,17 +153,19 @@ class UIBook extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _getCoverImage(),
-              ..._getDataBook(context),
+              bookCoverImage,
+
+              if (bookData != null) ...bookData!
+              else CircularProgressIndicator(), // TODO: containerPlaceholderLoader
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (book.rating != null) TesArteRating(rating: book.rating, readOnly: true)
+                  if (widget.book.rating != null) TesArteRating(rating: widget.book.rating, readOnly: true)
                   else SizedBox.shrink(),
-                  _getActionButtons()
+                  bookActionButtons
                 ]
               )
-
             ]
           ),
         ),

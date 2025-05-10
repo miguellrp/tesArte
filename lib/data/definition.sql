@@ -68,9 +68,20 @@ CREATE TABLE T_AUTHOR(
     a_author_id INTEGER PRIMARY KEY NOT NULL,
     a_name TEXT CHECK (LENGTH(a_name) <= 250) UNIQUE NOT NULL,
     a_birth_date DATE
+    -- -1 -> GENERIC | 0 → BOOK AUTHOR, 1 → FILM AUTHOR, 2 → SERIES AUTHOR ... ⬇️
+    a_author_type INTEGER CHECK(a_author_type IN (-1, 0, 1, 2))
+    -- TODO: a_author_image_path (CHECK( LENGTH(a_author_image_path) <= 500 ))
 );
 
--- RELATIONAL TABLE --
+-- RELATIONAL TABLES --
+CREATE TABLE T_USER_AUTHOR(
+    a_user_author_id INTEGER PRIMARY KEY NOT NULL,
+    a_user_id INTEGER NOT NULL,
+    a_author_id INTEGER NOT NULL,
+    FOREIGN KEY (a_user_id) REFERENCES T_USER(a_user_id) ON DELETE CASCADE,
+    FOREIGN KEY (a_author_id) REFERENCES T_AUTHOR(a_author_id) ON DELETE CASCADE
+);
+
 CREATE TABLE T_BOOK_AUTHOR(
     a_book_author_id INTEGER PRIMARY KEY NOT NULL,
     a_book_id INTEGER NOT NULL,

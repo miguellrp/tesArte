@@ -82,10 +82,11 @@ class _YourBooksViewState extends State<YourBooksView> {
       ));
 
       bookshelfContent = Wrap(
-        direction: Axis.vertical,
+        alignment: WrapAlignment.center,
+        direction: Axis.horizontal,
         spacing: 10,
         runSpacing: 10,
-        children: [...books, TesArteIconButton(icon: Icon(Icons.add), tooltipText: "AAA", onPressed: () => DialogPreviewGoogleBooks.show(context))]
+        children: books
       );
     }
 
@@ -100,6 +101,8 @@ class _YourBooksViewState extends State<YourBooksView> {
       titleView: AppLocalizations.of(context)!.yourBooks,
       body: Column(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 20,
         children: [
           Row(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tesArte/common/components/generic/tesarte_tooltip/tesarte_tooltip.dart';
-import 'package:tesArte/common/utils/tesarte_extensions.dart';
 
 class TesArteIconButton extends StatefulWidget {
   final Icon icon;

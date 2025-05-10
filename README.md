@@ -2,4 +2,4 @@
 Una app donde gestionar tu biblioteca cultural
 
 ## tesArteDB (in progress 🏗️)
-![tesArte current DB schema](docs/images/tesarte_current_db_schema.svg "tesArte current DB schema")
+https://www.drawdb.app/editor?shareId=c2fce0b3178b2ade62e0edec50dced6d

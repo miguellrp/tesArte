@@ -4,6 +4,9 @@ import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
+import 'package:tesArte/models/author/author.dart';
+import 'package:tesArte/models/author/author_list.dart';
+import 'package:tesArte/models/author/book/book_author.dart';
 import 'package:tesArte/models/book/book.dart';
 import 'package:tesArte/models/book/google_book.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
@@ -11,9 +14,9 @@ import 'package:tesArte/views/your_books_view/dialogs/dialog_description_google_
 import 'package:transparent_image/transparent_image.dart';
 
 class UIGoogleBook extends StatefulWidget {
-  GoogleBook googleBook;
+  final GoogleBook googleBook;
 
-  UIGoogleBook({super.key, required this.googleBook});
+  const UIGoogleBook({super.key, required this.googleBook});
 
   @override
   State<UIGoogleBook> createState() => _UIGoogleBookState();
@@ -24,7 +27,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
 
   @override
   void initState() {
-    authors = (widget.googleBook.authors != null && widget.googleBook.authors!.isNotEmpty) ? widget.googleBook.authors!.join(" | ") : "Anónimo"; // TODO: lang
+    authors = (widget.googleBook.authorsNames != null && widget.googleBook.authorsNames!.isNotEmpty) ? widget.googleBook.authorsNames!.join(" | ") : "Anónimo"; // TODO: lang
     super.initState();
   }
 
@@ -88,17 +91,39 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
 
               await selectedBook.add();
 
-              if (mounted) {
-                if (!selectedBook.errorDB) {
-                  TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
-                  Navigator.of(context).pop(true);
+
+              if (selectedBook.errorDB) {
+                if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
+                  TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
                 } else {
-                  if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
-                    TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
-                  } else {
-                    TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
+                  TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
+                }
+              } else {
+                AuthorList authorsList = AuthorList();
+                bool errorOnCreateAuthorsProcess = false;
+
+                await authorsList.createAuthorsFromGoogleBook(widget.googleBook);
+                errorOnCreateAuthorsProcess = authorsList.errorDB;
+
+                if (!errorOnCreateAuthorsProcess) {
+                  for (Author author in authorsList) {
+                    BookAuthor bookAuthor = BookAuthor(
+                        bookId: selectedBook.bookId,
+                        authorId: author.authorId
+                    );
+
+                    await bookAuthor.addAuthorToBook();
+                    errorOnCreateAuthorsProcess = bookAuthor.errorDB;
                   }
                 }
+
+                if (errorOnCreateAuthorsProcess) {
+                  TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar crear a autoría deste libro"); // TODO: lang
+                } else {
+                  TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
+                }
+
+                if (mounted) Navigator.of(context).pop(!errorOnCreateAuthorsProcess);
               }
             }
           ),

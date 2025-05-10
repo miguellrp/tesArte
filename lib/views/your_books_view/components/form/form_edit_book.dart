@@ -7,6 +7,7 @@ import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/data/tesarte_domain.dart';
 import 'package:tesArte/models/book/book.dart';
+import 'package:tesArte/views/your_books_view/components/form/book_author_selector.dart';
 import 'package:tesArte/views/your_books_view/components/form/book_status_form_field.dart';
 
 final double spacing = 20.0;
@@ -41,6 +42,8 @@ class _FormEditBookState extends State<FormEditBook> {
   late final BookStatusFormField bookStatusFormField;
   late final TesArteTextFormField descriptionFormField;
   late final TesArteTextFormField publishedYearFormField;
+
+  late final BookAuthorSelector bookAuthorSelector;
 
   late final TesArteRating bookRating;
 
@@ -84,6 +87,8 @@ class _FormEditBookState extends State<FormEditBook> {
       }
     );
 
+    bookAuthorSelector = BookAuthorSelector(book: widget.book);
+
     descriptionFormField = TesArteTextFormField(
       labelText: "Descripción", // TODO: lang
       minLines: 5,
@@ -96,6 +101,7 @@ class _FormEditBookState extends State<FormEditBook> {
       labelText: "Ano de publicación", // TODO: lang
       textFormFieldType: TextFormFieldType.number,
       controller: publishedYearBookController,
+      maxWidth: 150,
       onChange: (_) => markFormWithChanges(),
       validator: (value) => TesArteValidator.doValidation(
         type: TesArteValidatorType.integerNumber,
@@ -176,6 +182,8 @@ class _FormEditBookState extends State<FormEditBook> {
                 )
               ],
             ),
+            bookAuthorSelector,
+            publishedYearFormField,
             descriptionFormField,
             getSaveButton()
           ]
