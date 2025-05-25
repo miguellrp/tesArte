@@ -24,6 +24,7 @@ class Book {
   String? coverImagePath;
   double? rating;
   int? status; // 0 → TO BE READ, 1 → READING, 2 → READ
+  DateTime? additionDate;
 
   bool errorDB = false;
   String? errorDBType;
@@ -37,7 +38,8 @@ class Book {
     this.description,
     this.coverImagePath,
     this.rating,
-    this.status = 0
+    this.status = 0,
+    this.additionDate
   });
 
   Book.fromMap(Map<String, dynamic> map) {
@@ -51,6 +53,7 @@ class Book {
     coverImagePath = map["a_cover_image_path"]?.toString(); // TODO: format correctly null values
     rating = UtilText.isNumeric(map["a_rating"].toString()) ? double.parse(map["a_rating"].toString()) : null;
     status = UtilText.isIntegerNumber(map["a_status"].toString()) ? int.parse(map["a_status"].toString()) : 0;
+    additionDate = DateTime.tryParse(map["a_addition_date"].toString());
   }
 
   Map<String, Object?> toMap() {

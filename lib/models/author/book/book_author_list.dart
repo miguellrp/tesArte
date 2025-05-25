@@ -18,9 +18,7 @@ class BookAuthorList extends ModelList<BookAuthor> {
       await tesArteDB.rawQuery(_getFromBookRawQuery(),
         [book.bookId]
       ).then((bookAuthorsMapList) {
-        for (final bookAuthorMap in bookAuthorsMapList) {
-          add(BookAuthor.fromMap(bookAuthorMap));
-        }
+        Future.forEach(bookAuthorsMapList, (bookAuthorMap) => add(BookAuthor.fromMap(bookAuthorMap)));
       });
     } catch (exception) {
       errorDB = true;
@@ -30,7 +28,7 @@ class BookAuthorList extends ModelList<BookAuthor> {
 
   Future<void> addToBook(Book book) async {
     if (isNotEmpty) {
-      forEach((BookAuthor bookAuthor) {
+      for (final BookAuthor bookAuthor in this) {
         bookAuthor.bookId = book.bookId;
         bookAuthor.addAuthorToBook();
 
@@ -38,15 +36,6 @@ class BookAuthorList extends ModelList<BookAuthor> {
           errorDB = true;
           errorDBType = bookAuthor.errorDBType;
         }
-      });
-    } else {
-      final BookAuthor unknownAuthor = BookAuthor(name: "Anónimo"); // TODO: lang
-      unknownAuthor.bookId = book.bookId;
-      await unknownAuthor.addAuthorToBook();
-
-      if (unknownAuthor.errorDB) {
-        errorDB = true;
-        errorDBType = unknownAuthor.errorDBType;
       }
     }
   }
@@ -65,7 +54,7 @@ class BookAuthorList extends ModelList<BookAuthor> {
 
   /* --- STATIC PRIVATE METHODS --- */
   static String _getFromBookRawQuery() {
-    return "SELECT tba.a_book_id, tba.a_author_id, ta.a_name, ta.a_birth_date"
+    return "SELECT tba.a_book_id, tba.a_author_id, ta.a_name, ta.a_birth_date, ta.a_author_type"
         " FROM t_book_author tba"
         " JOIN t_author ta ON tba.a_author_id = ta.a_author_id"
         " WHERE tba.a_book_id = ?";

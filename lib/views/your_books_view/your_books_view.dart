@@ -7,6 +7,7 @@ import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/l10n/generated/app_localizations.dart';
+import 'package:tesArte/models/book/book.dart';
 import 'package:tesArte/models/book/book_list.dart';
 import 'package:tesArte/ui_models/book/ui_book.dart';
 import 'package:tesArte/views/your_books_view/dialogs/dialog_preview_google_books.dart';
@@ -24,6 +25,7 @@ class _YourBooksViewState extends State<YourBooksView> {
   String searchTerm = "";
 
   bool bookshelfInitialized = false;
+  bool didSearchBook = false;
 
   late TesArteSearchBar tesArteSearchBar;
   late TesArteIconButton searchNewBookButton;
@@ -34,7 +36,10 @@ class _YourBooksViewState extends State<YourBooksView> {
       onSearch: (value) {
         if (searchTerm != value) {
           searchTerm = value;
-          setState(() => bookshelfInitialized = false);
+          setState(() {
+            bookshelfInitialized = false;
+            didSearchBook = true;
+          });
         }
       }
     );
@@ -65,28 +70,21 @@ class _YourBooksViewState extends State<YourBooksView> {
     setState(() => bookshelfInitialized = true);
   }
 
-  Widget _getBookshelf() {
+  Widget _getBooks() {
     Widget bookshelfContent;
 
     if (bookshelf.books.isEmpty) {
       bookshelfContent = Center(
-        child: Text("O estante está baleiro") // TODO: lang
+        child: Text(didSearchBook ? "Non se atoparon libros co termo procurado" : "O estante está baleiro.") // TODO: lang
       );
     } else {
-      final List<UIBook> books = [];
-      bookshelf.books.forEach((book) => books.add(
-        UIBook(
-          book: book,
+      bookshelfContent = ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        itemCount: bookshelf.books.length,
+        itemBuilder: (context, index) => UIBook(
+          book: bookshelf.books[index],
           onModification: () => setState(() => bookshelfInitialized = false)
-        )
-      ));
-
-      bookshelfContent = Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.horizontal,
-        spacing: 10,
-        runSpacing: 10,
-        children: books
+        ),
       );
     }
 
@@ -102,7 +100,6 @@ class _YourBooksViewState extends State<YourBooksView> {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 20,
         children: [
           Row(
@@ -116,11 +113,7 @@ class _YourBooksViewState extends State<YourBooksView> {
           ),
           TesArteDivider(),
           Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-              child: bookshelfInitialized ? SingleChildScrollView(child: _getBookshelf()) : TesArteLoader()
-            )
+            child: bookshelfInitialized ? _getBooks() : TesArteLoader(),
           )
         ],
       )

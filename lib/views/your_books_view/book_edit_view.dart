@@ -14,11 +14,17 @@ class BookEditView extends StatelessWidget {
   Widget build(BuildContext context) {
     final FormEditBook form = FormEditBook(book: book);
 
-    return BasicLayout(
-      titleView: book.title.isEmptyOrNull ? "Nuevo libro" : "Edición do libro", // TODO: lang
-      canPop: true,
-      onBackButtonPressed: form.hasSavedChanges ? () => Navigator.of(context).pop(true) : null,
-      body: form
+    return ValueListenableBuilder<bool>(
+      valueListenable: form.hasSavedChangesNotifier,
+      builder: (context, hasSavedChanges, child) {
+        return BasicLayout(
+          titleView: book.title.isEmptyOrNull ? "Nuevo libro" : "Edición do libro", // TODO: lang
+          canPop: true,
+          onBackButtonPressed: hasSavedChanges ? () => Navigator.of(context).pop(true) : null,
+          body: form,
+        );
+      },
     );
+
   }
 }

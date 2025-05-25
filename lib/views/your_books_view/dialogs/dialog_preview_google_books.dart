@@ -42,11 +42,13 @@ class _DialogPreviewGoogleBooksWidgetState extends State<_DialogPreviewGoogleBoo
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return TesArteLoader();
                   } else if (snapshot.hasError) {
-                    return Text(
-                      "Ocurriu un erro ó intentar procurar libros",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ), // TODO: lang
+                    return Center(
+                      child: Text(
+                        "Ocurriu un erro ó intentar procurar libros",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ), // TODO: lang
+                      ),
                     );
                   } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     List<GoogleBook> booksFound = snapshot.data!;

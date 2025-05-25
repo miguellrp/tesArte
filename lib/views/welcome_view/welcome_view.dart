@@ -81,6 +81,7 @@ class _WelcomePageState extends State<WelcomeView> {
       );
 
       welcomingCard = TesArteCard(
+        direction: Axis.vertical,
         spacing: 15,
         widgets: [
           if (!existsLastLoggedUser) ...[

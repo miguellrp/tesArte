@@ -28,6 +28,7 @@ CREATE TABLE T_BOOK(
     a_cover_image_path TEXT CHECK (LENGTH(a_cover_image_path) <= 500),
     a_rating REAL CHECK (a_rating >= 0 AND a_rating <= 5),
     a_status INT CHECK (a_status >= 0 AND a_status <= 2), -- 0 → TO BE READ, 1 → READING, 2 -> READ
+    a_addition_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (a_user_id) REFERENCES T_USER(a_user_id)
 );
 
@@ -67,7 +68,7 @@ CREATE TABLE T_NOTE(
 CREATE TABLE T_AUTHOR(
     a_author_id INTEGER PRIMARY KEY NOT NULL,
     a_name TEXT CHECK (LENGTH(a_name) <= 250) UNIQUE NOT NULL,
-    a_birth_date DATE
+    a_birth_date DATE,
     -- -1 -> GENERIC | 0 → BOOK AUTHOR, 1 → FILM AUTHOR, 2 → SERIES AUTHOR ... ⬇️
     a_author_type INTEGER CHECK(a_author_type IN (-1, 0, 1, 2))
     -- TODO: a_author_image_path (CHECK( LENGTH(a_author_image_path) <= 500 ))
