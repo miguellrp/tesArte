@@ -49,7 +49,7 @@ class _TesArteNavigationBarState extends State<TesArteNavigationBar> {
           destinationTile: TesArteNavBarDestinationTile(
             icon: Icons.book,
             title: AppLocalizations.of(context)!.yourBooks,
-            selected: currentRoute == YourBooksView.route,
+            selected: currentRoute!.contains("book"),
             onTap: () => context.go(YourBooksView.route)
           )
         )

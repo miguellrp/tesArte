@@ -25,27 +25,19 @@ class AuthorList extends ModelList<Author> {
     }
   }
 
-  Future<int> createAuthors() async {
+  Future<int> createAuthors(AuthorType authorType) async {
     int authorsCreated = 0;
 
     if (isNotEmpty) {
-      Future.forEach(this, (Author author) async {
-        Author newAuthor = Author(name: author.name);
+      for (final Author author in this) {
+        Author newAuthor = Author(name: author.name, authorType: authorType);
         await author.createAuthor();
 
         if (newAuthor.errorDB) {
           errorDB = true;
           errorDBType = author.errorDBType;
-        } else {
-          Author unknownAuthor = Author(name: "Anónimo"); // TODO: lang
-          await unknownAuthor.createAuthor();
-
-          if (unknownAuthor.errorDB) {
-            errorDB = true;
-            errorDBType = unknownAuthor.errorDBType;
-          }
         }
-      });
+      }
     }
 
     return authorsCreated;
@@ -57,7 +49,7 @@ class AuthorList extends ModelList<Author> {
     if (googleBook.authorsNames == null) authorNames = [];
 
     for (final String authorName in authorNames!) {
-      final Author newAuthor = Author(name: authorName);
+      final Author newAuthor = Author(name: authorName, authorType: AuthorType.book);
       await newAuthor.createAuthor();
       add(newAuthor);
 

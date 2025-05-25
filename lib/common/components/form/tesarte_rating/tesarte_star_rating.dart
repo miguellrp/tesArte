@@ -2,11 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class TesArteStarRating extends StatefulWidget {
-  // booleans to SAVE state of star
+  // booleans to SAVE status of star
   bool isHalfStar;
   bool isFullStar;
 
-  // booleans to CHANGE (only visual) state of star
+  // booleans to CHANGE (only visual) status of star
   bool isHoverHalfStar;
   bool isHoverFullStar;
 
@@ -108,29 +108,29 @@ class _TesArteStarRatingState extends State<TesArteStarRating> {
     );
   }
 
-  Container _getStarRatingNonInteractive() {
+  Container _getStarRatingNoInteractive() {
     return Container(
       width: 12,
       height: 12,
       decoration: ShapeDecoration(
-          gradient: LinearGradient(
-            colors: [
-              if (widget.isHoverHalfStar || widget.isHoverFullStar) Theme.of(context).colorScheme.primary
-              else Theme.of(context).colorScheme.secondary,
+        gradient: LinearGradient(
+          colors: [
+            if (widget.isHoverHalfStar || widget.isHoverFullStar) Theme.of(context).colorScheme.primary
+            else Theme.of(context).colorScheme.secondary,
 
-              Theme.of(context).colorScheme.secondary.withAlpha(150)
-            ],
-            stops: _getGradientStops(),
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          shape: StarBorder(pointRounding: 0.4)
+            Theme.of(context).colorScheme.secondary.withAlpha(150)
+          ],
+          stops: _getGradientStops(),
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        shape: StarBorder(pointRounding: 0.4)
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.readOnly ? _getStarRatingNonInteractive() : _getStarRatingInteractive();
+    return widget.readOnly ? _getStarRatingNoInteractive() : _getStarRatingInteractive();
   }
 }

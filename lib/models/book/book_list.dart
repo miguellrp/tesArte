@@ -19,6 +19,7 @@ class BookList {
             " AND (LOWER(a_title) LIKE LOWER('%' || ? || '%')"
               " OR LOWER(a_subtitle) LIKE LOWER('%' || ? || '%'))",
         whereArgs: [TesArteSession.instance.getActiveUser()!.userId, ...whereParams ?? []],
+        orderBy: "a_addition_date DESC"
         ).then((booksMapList) => booksMapList.map((dataBook) => Book.fromMap(dataBook)).toList())
       );
     } catch (exception) {

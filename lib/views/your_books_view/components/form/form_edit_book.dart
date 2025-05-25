@@ -14,6 +14,7 @@ final double spacing = 20.0;
 
 class FormEditBook extends StatefulWidget {
   final Book book;
+  final ValueNotifier<bool> hasSavedChangesNotifier = ValueNotifier(false);
 
   FormEditBook({super.key, required this.book});
 
@@ -21,13 +22,10 @@ class FormEditBook extends StatefulWidget {
 
   @override
   State<FormEditBook> createState() => _FormEditBookState();
-
-  bool get hasSavedChanges => _formKey.currentState?.formHasSavedChanges ?? false;
 }
 
 class _FormEditBookState extends State<FormEditBook> {
   bool formHasUnsavedChanges = false;
-  bool formHasSavedChanges = false;
 
   int bookStatusValue = 0;
 
@@ -137,7 +135,7 @@ class _FormEditBookState extends State<FormEditBook> {
             TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar gardar os cambios"); // TODO: lang
           } else {
             setState(() {
-              formHasSavedChanges = true;
+              widget.hasSavedChangesNotifier.value = true;
               formHasUnsavedChanges = false;
             });
             TesArteToast.showSuccessToast(message: "Cambios gardados correctamente"); // TODO: lang

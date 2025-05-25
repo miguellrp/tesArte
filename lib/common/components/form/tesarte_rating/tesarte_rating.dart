@@ -21,9 +21,9 @@ class _TesArteRatingState extends State<TesArteRating> {
   Row _getRatingStars() {
     totalStars = List.generate(5, (index) =>  TesArteStarRating(
       readOnly: widget.readOnly,
-      isHalfStar: widget.rating != null && widget.rating! > index && widget.rating! < index + 1,
+      isHalfStar: widget.rating != null && (widget.rating! > index && widget.rating! < index + 1),
       isFullStar: widget.rating != null && index < widget.rating!.floor(),
-      isHoverHalfStar: hoverRating != null && hoverRating! > index && hoverRating! < index + 1,
+      isHoverHalfStar: hoverRating != null && (hoverRating! > index && hoverRating! < index + 1),
       isHoverFullStar: hoverRating != null && index < hoverRating!.floor(),
       isHoveringGroup: hoverRating != null,
       onHover: () => doHoverAction(index),
@@ -98,7 +98,16 @@ class _TesArteRatingState extends State<TesArteRating> {
     );
   }
 
-  Container _getRatingNonInteractive() {
+  Text _getRatingPlaceholder() => Text(
+    "Sen valorar", // TODO: lang
+    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+      color: Theme.of(context).colorScheme.secondary.withAlpha(190),
+      fontSize: 10,
+      fontStyle: FontStyle.italic
+    )
+  );
+
+  Container _getRatingNoInteractive() {
     return Container(
       constraints: BoxConstraints(maxWidth: 300),
       padding: const EdgeInsets.all(8),
@@ -109,14 +118,14 @@ class _TesArteRatingState extends State<TesArteRating> {
           width: 1
         )
       ),
-      child: _getRatingStars()
+      child: widget.rating != null ? _getRatingStars() : _getRatingPlaceholder()
     );
   }
 
   @override
-  Container build(BuildContext context) {
+  Widget build(BuildContext context) {
     assert(widget.rating == null || widget.rating! >= 0 && widget.rating! <= 5, "Rating must be between 0 and 5 [value = ${widget.rating}]");
 
-    return widget.readOnly ? _getRatingNonInteractive() : _getRatingInteractive();
+    return widget.readOnly ? _getRatingNoInteractive() : _getRatingInteractive();
   }
 }

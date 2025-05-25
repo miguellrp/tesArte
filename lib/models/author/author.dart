@@ -14,6 +14,7 @@ class Author {
   int? authorId;
   String? name;
   DateTime? birthDate;
+  AuthorType? authorType;
 
   bool errorDB = false;
   String? errorDBType;
@@ -21,13 +22,15 @@ class Author {
   Author({
     this.authorId,
     this.name,
-    this.birthDate
+    this.birthDate,
+    this.authorType
   });
 
   Author.fromMap(Map<String, Object?> map) {
     authorId = int.parse(map["a_author_id"].toString());
     name = map["a_name"].toString();
     birthDate = DateTime.tryParse(map["a_birth_date"].toString());
+    authorType = _getAuthorType(int.parse(map["a_author_type"].toString()));
   }
 
   Map<String, Object?> toMap() {
@@ -35,6 +38,7 @@ class Author {
       "a_author_id": authorId,
       "a_name": name,
       "a_birth_date": birthDate,
+      "a_author_type": authorType?.index
     };
   }
 
@@ -87,5 +91,19 @@ class Author {
       errorDB = true;
       errorDBType = exception.toString();
     }
+  }
+
+  /* --- HELPER OPERATIONS --- */
+  static AuthorType _getAuthorType(int authorTypeInt) {
+    late final AuthorType authorType;
+
+    switch (authorTypeInt) {
+      case 0: authorType = AuthorType.book; break;
+      case 1: authorType = AuthorType.film; break;
+      case 2: authorType = AuthorType.series; break;
+      default: authorType = AuthorType.generic; break;
+    }
+
+    return authorType;
   }
 }

@@ -96,6 +96,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
                 if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
                   TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
                 } else {
+                  print(selectedBook.errorDBType);
                   TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
                 }
               } else {

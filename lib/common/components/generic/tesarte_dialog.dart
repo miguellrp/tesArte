@@ -22,9 +22,20 @@ class TesArteDialog {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Center(child: Text(titleDialog, style: TextStyle(color: _getDialogColor(dialogType)),)),
+          title: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 10,
+              children: [
+                _getDialogIcon(dialogType),
+                Text(titleDialog,
+                  style: TextStyle(color: _getDialogColor(dialogType))
+                ),
+              ],
+            )
+          ),
           actions: _getActionButtons(dialogType),
-          icon: _getDialogIcon(dialogType),
           iconColor: _getDialogColor(dialogType),
           shape: _getShapeDialog(dialogType),
           content: Column(
@@ -74,17 +85,17 @@ class TesArteDialog {
   }
 
   static Icon _getDialogIcon(TesArteDialogType dialogType) {
-    Icon dialogIcon;
+    IconData dialogIcon;
 
     switch (dialogType) {
-      case TesArteDialogType.error: dialogIcon = Icon(Icons.error_rounded); break;
-      case TesArteDialogType.warning: dialogIcon = Icon(Icons.warning_rounded); break;
-      case TesArteDialogType.confirm: dialogIcon = Icon(Icons.check_rounded); break;
-      case TesArteDialogType.info: dialogIcon = Icon(Icons.info_rounded); break;
-      case TesArteDialogType.custom: dialogIcon = Icon(Icons.info_rounded); break;
+      case TesArteDialogType.error: dialogIcon = Icons.error_rounded; break;
+      case TesArteDialogType.warning: dialogIcon = Icons.warning_rounded; break;
+      case TesArteDialogType.confirm: dialogIcon = Icons.check_rounded; break;
+      case TesArteDialogType.info: dialogIcon = Icons.info_rounded; break;
+      case TesArteDialogType.custom: dialogIcon = Icons.info_rounded; break;
     }
 
-    return dialogIcon;
+    return Icon(dialogIcon, color: _getDialogColor(dialogType));
   }
 
   static RoundedRectangleBorder _getShapeDialog(TesArteDialogType dialogType) {

@@ -23,12 +23,13 @@ class BookAuthorSelector extends StatefulWidget {
 
 class _BookAuthorSelectorState extends State<BookAuthorSelector> {
   final TextEditingController _controller = TextEditingController();
-  List<TesArteBubble>? bookAuthorBubbles;
+  bool dataInitialized = false;
+
+  List<TesArteBubble> bookAuthorBubbles = [];
 
   @override
   void initState() {
-    initializeData();
-    initializeBubbles();
+    initializeWidget();
     super.initState();
   }
 
@@ -38,13 +39,24 @@ class _BookAuthorSelectorState extends State<BookAuthorSelector> {
     super.dispose();
   }
 
-  void initializeData() async {
-    AuthorList allAvailableBookAuthors = AuthorList();
-    await allAvailableBookAuthors.getAllAuthorsWithType(AuthorType.book);
+  Future<void> initializeWidget() async {
+    await getBookAuthorsData();
+    if (dataInitialized) await initializeBubbles();
   }
 
-  void initializeBubbles() async {
-    bookAuthorBubbles ??= await _getBookAuthorsBubbles();
+  Future<void> getBookAuthorsData() async {
+    AuthorList allAvailableBookAuthors = AuthorList();
+    await allAvailableBookAuthors.getAllAuthorsWithType(AuthorType.book);
+
+    if (allAvailableBookAuthors.errorDB) {
+      TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar obter a autoría deste libro"); // TODO: lang
+    } else {
+      setState(() => dataInitialized = true);
+    }
+  }
+
+  Future<void> initializeBubbles() async {
+    bookAuthorBubbles = await _getBookAuthorsBubbles();
   }
 
   Future<List<TesArteBubble>> _getBookAuthorsBubbles() async {
@@ -57,12 +69,12 @@ class _BookAuthorSelectorState extends State<BookAuthorSelector> {
       if (bookAuthorsList.errorDB) {
         TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar obter a autoría deste libro"); // TODO: lang
       } else {
-        bookAuthorsList.forEach((BookAuthor bookAuthor) {
+        for (final BookAuthor bookAuthor in bookAuthorsList) {
           authorBubbles.add(TesArteBubble(
             bubbleText: bookAuthor.name!,
             onRemove: () => bookAuthor.deleteAuthorFromBook(),
           ));
-        });
+        }
       }
     }
 
@@ -89,7 +101,8 @@ class _BookAuthorSelectorState extends State<BookAuthorSelector> {
             spacing: 10,
             runSpacing: 10,
             children: [
-              if (bookAuthorBubbles != null) ...bookAuthorBubbles!
+              if (bookAuthorBubbles.isNotEmpty) ...bookAuthorBubbles
+              else if (bookAuthorBubbles.isEmpty) Text("Anónimo" /*TODO: lang*/, style: TextTheme.of(context).bodyMedium!.copyWith(fontStyle: FontStyle.italic))
               else TesArteLoader()
             ]
           ),
