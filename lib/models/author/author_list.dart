@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:tesArte/models/author/author.dart';
-import 'package:tesArte/models/book/google_book.dart';
+import 'package:tesArte/books/models/google_book.dart';
 import 'package:tesArte/models/model_list.dart';
 
 class AuthorList extends ModelList<Author> {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
-import 'package:tesArte/models/book/google_book.dart';
-import 'package:tesArte/ui_models/book/ui_google_book.dart';
+import 'package:tesArte/books/models/google_book.dart';
+import 'package:tesArte/books/ui/ui_models/ui_google_book.dart';
 
 class _DialogPreviewGoogleBooksWidget extends StatefulWidget {
   const _DialogPreviewGoogleBooksWidget();

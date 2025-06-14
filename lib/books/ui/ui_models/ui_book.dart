@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesArte/app_config/router.dart';
+import 'package:tesArte/books/controllers/book_controller.dart';
+import 'package:tesArte/books/views/ui_widgets/book_status_preview.dart';
 import 'package:tesArte/common/components/form/tesarte_rating/tesarte_rating.dart';
 import 'package:tesArte/common/components/generic/tesarte_card.dart';
 import 'package:tesArte/common/components/generic/tesarte_dialog.dart';
@@ -11,34 +13,57 @@ import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
 import 'package:tesArte/models/author/book/book_author_list.dart';
-import 'package:tesArte/models/book/book.dart';
-import 'package:tesArte/views/your_books_view/book_edit_view.dart';
-import 'package:tesArte/views/your_books_view/components/book_status_preview.dart';
+import 'package:tesArte/books/views/book_edit_view.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIBook extends StatefulWidget {
-  final Book book;
+  static final double bookCoverMiniatureWidth = 128;
+  static final double bookCoverMiniatureHeight = 183;
+
+  final BookController controller;
   /// [VoidCallback] that will be called when the book is modified or deleted.
   final VoidCallback? onModification;
 
-  const UIBook({super.key, required this.book, this.onModification});
+  const UIBook({super.key, required this.controller, this.onModification});
 
   @override
   State<UIBook> createState() => _UIBookState();
+
+  static ClipRRect getCoverImage({required String? coverImagePath, required int? status}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Stack(
+        children: [
+          if (coverImagePath.isNotEmptyAndNotNull) FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: coverImagePath!,
+            width: UIBook.bookCoverMiniatureWidth,
+            height: UIBook.bookCoverMiniatureHeight,
+            fit: BoxFit.fill,
+          )
+          else BookPlaceholder(),
+          Positioned(left: 10, top: 0, child: BookStatusPreview(status: status))
+        ]),
+    );
+  }
 }
 
 class _UIBookState extends State<UIBook> {
+  BookController get activeController => widget.controller;
   bool verticalDirection = false;
-
-  late final ClipRRect bookCoverImage;
-  late final Container bookActionButtons;
 
   List<Widget>? bookData;
 
+  ClipRRect get coverImage => ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: activeController.model.coverImagePath.isNotEmptyAndNotNull ? FadeInImage.memoryNetwork(
+      placeholder: kTransparentImage,
+      image: activeController.model.coverImagePath!,
+    ) : BookPlaceholder(),
+  );
+
   @override
   void initState() {
-    bookCoverImage = _getCoverImage();
-    bookActionButtons = _getActionButtons();
     initializeBookData();
 
     super.initState();
@@ -55,32 +80,14 @@ class _UIBookState extends State<UIBook> {
     super.didChangeDependencies();
   }
 
-  ClipRRect _getCoverImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Stack(
-        children: [
-          if (widget.book.coverImagePath.isNotEmptyAndNotNull) FadeInImage.memoryNetwork(
-            placeholder: kTransparentImage,
-            image: widget.book.coverImagePath!,
-            width: Book.bookCoverMiniatureWidth,
-            height: Book.bookCoverMiniatureHeight,
-            fit: BoxFit.fill,
-          )
-          else BookPlaceholder(),
-          Positioned(left: 10, top: 0, child: BookStatusPreview(status: widget.book.status))
-      ]),
-    );
-  }
-
   Future<List<Widget>> _getDataBook(BuildContext context) async {
     List<Widget> dataBookWidgets = [];
     final BookAuthorList bookAuthorsList = BookAuthorList();
-    await bookAuthorsList.getFromBook(book: widget.book);
+    await bookAuthorsList.getFromBook(book: activeController.model);
 
     if (navigatorKey.currentContext!.mounted) {
       dataBookWidgets = [
-        UtilText.getEllipsizedText(widget.book.title!,
+        UtilText.getEllipsizedText(activeController.model.title!,
           maxLines: 2,
           textAlign: verticalDirection ? TextAlign.center : TextAlign.start,
           style: TextTheme.of(context).titleSmall!.copyWith(
@@ -90,7 +97,7 @@ class _UIBookState extends State<UIBook> {
         ),
         if (bookAuthorsList.isNotEmpty) UtilText.getEllipsizedText(bookAuthorsList.getAllNames().join(" | "))
         else UtilText.getEllipsizedText("Anónimo"), // TODO: lang
-        UtilText.getEllipsizedText("[${widget.book.publishedYear??"s.f."}]")
+        UtilText.getEllipsizedText("[${activeController.model.publishedYear??"s.f."}]")
       ];
     }
 
@@ -122,7 +129,7 @@ class _UIBookState extends State<UIBook> {
   }
 
   void _doEditAction() async {
-    bool didChange = await navigatorKey.currentContext!.push(BookEditView.route, extra: widget.book)??false;
+    bool didChange = await navigatorKey.currentContext!.push(BookEditView.route, extra: widget.controller)??false;
 
     if (didChange && widget.onModification != null) widget.onModification!();
   }
@@ -132,13 +139,13 @@ class _UIBookState extends State<UIBook> {
       dialogType: TesArteDialogType.warning,
       titleDialog: "Eliminar libro", // TODO: lang
       subtitleDialog: "Vaise eliminar o siguiente libro do teu estante:", // TODO: lang
-      coloredText: widget.book.title
+      coloredText: activeController.model.title
     ) ?? false;
 
     if (confirmDeleteBook) {
-      final int booksDeleted = await widget.book.deleteBook();
+      final int booksDeleted = await activeController.delete();
 
-      if (!widget.book.errorDB && booksDeleted == 1) {
+      if (!activeController.errorDB && booksDeleted == 1) {
         TesArteToast.showSuccessToast(message: "Eliminouse correctamente o libro do teu estante"); // TODO: lang
         if (widget.onModification != null) widget.onModification!();
       } else {
@@ -153,8 +160,11 @@ class _UIBookState extends State<UIBook> {
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: 10,
       children: [
-        bookCoverImage,
-        TesArteRating(rating: widget.book.rating, readOnly: true),
+        UIBook.getCoverImage(
+          coverImagePath: activeController.model.coverImagePath,
+          status: activeController.model.status
+        ),
+        TesArteRating(rating: activeController.model.rating, readOnly: true),
 
         if (bookData != null) ...bookData!
         else CircularProgressIndicator(), // TODO: containerPlaceholderLoader
@@ -165,7 +175,10 @@ class _UIBookState extends State<UIBook> {
   ];
 
   List<Widget> _getHorizontalCard() => [
-    bookCoverImage,
+    UIBook.getCoverImage(
+      coverImagePath: activeController.model.coverImagePath,
+      status: activeController.model.status
+    ),
 
     Expanded(
       child: Column(
@@ -185,7 +198,7 @@ class _UIBookState extends State<UIBook> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          TesArteRating(rating: widget.book.rating, readOnly: true),
+          TesArteRating(rating: activeController.model.rating, readOnly: true),
           _getActionButtons()
         ],
       ),

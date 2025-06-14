@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tesArte/books/ui/ui_models/ui_book.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder_painter.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_mask_painter.dart';
-import 'package:tesArte/models/book/book.dart';
 
 
-final double bookPlaceholderWidth = Book.bookCoverMiniatureWidth;
-final double bookPlaceholderHeight = Book.bookCoverMiniatureHeight;
+final double bookPlaceholderWidth = UIBook.bookCoverMiniatureWidth;
+final double bookPlaceholderHeight = UIBook.bookCoverMiniatureHeight;
 
 class BookPlaceholder extends StatelessWidget {
   Color? color;

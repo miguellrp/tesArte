@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:tesArte/books/controllers/book_controller.dart';
+import 'package:tesArte/books/dialogs/dialog_description_google_book.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
@@ -7,10 +9,8 @@ import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/models/author/author.dart';
 import 'package:tesArte/models/author/author_list.dart';
 import 'package:tesArte/models/author/book/book_author.dart';
-import 'package:tesArte/models/book/book.dart';
-import 'package:tesArte/models/book/google_book.dart';
+import 'package:tesArte/books/models/google_book.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
-import 'package:tesArte/views/your_books_view/dialogs/dialog_description_google_book.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIGoogleBook extends StatefulWidget {
@@ -86,17 +86,15 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
             tooltip: "Engadir libro ó estante", // TODO: lang
             icon: Icon(Icons.add),
             onPressed: () async {
-              Book selectedBook = Book.fromGoogleBook(widget.googleBook);
-              selectedBook.userId = TesArteSession.instance.getActiveUser()!.userId;
+              final BookController selectedBook = BookController.fromGoogleBook(widget.googleBook);
+              selectedBook.model.userId = TesArteSession.instance.getActiveUser()!.userId;
 
               await selectedBook.add();
-
 
               if (selectedBook.errorDB) {
                 if (selectedBook.errorDBType == "CONSTRAINT ERROR: Book already exists in database") {
                   TesArteToast.showWarningToast(message: "Este libro xa se engadiu ó teu estante"); // TODO: lang
                 } else {
-                  print(selectedBook.errorDBType);
                   TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
                 }
               } else {
@@ -109,7 +107,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
                 if (!errorOnCreateAuthorsProcess) {
                   for (Author author in authorsList) {
                     BookAuthor bookAuthor = BookAuthor(
-                        bookId: selectedBook.bookId,
+                        bookId: selectedBook.model.bookId,
                         authorId: author.authorId
                     );
 

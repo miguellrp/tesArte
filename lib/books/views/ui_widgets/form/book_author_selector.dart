@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesArte/books/models/book_model.dart';
 import 'package:tesArte/common/components/generic/tesarte_bubble.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
@@ -7,14 +8,13 @@ import 'package:tesArte/models/author/author.dart';
 import 'package:tesArte/models/author/author_list.dart';
 import 'package:tesArte/models/author/book/book_author.dart';
 import 'package:tesArte/models/author/book/book_author_list.dart';
-import 'package:tesArte/models/book/book.dart';
 
 class BookAuthorSelector extends StatefulWidget {
-  final Book? book;
+  final BookModel book;
 
   const BookAuthorSelector({
     super.key,
-    this.book
+    required this.book
   });
 
   @override

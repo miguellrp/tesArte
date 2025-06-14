@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
 import 'package:tesArte/models/author/book/book_author.dart';
-import 'package:tesArte/models/book/book.dart';
+import 'package:tesArte/books/models/book_model.dart';
 import 'package:tesArte/models/model_list.dart';
 
 class BookAuthorList extends ModelList<BookAuthor> {
@@ -11,7 +11,7 @@ class BookAuthorList extends ModelList<BookAuthor> {
   BookAuthorList({List<BookAuthor>? bookAuthorsList, this.errorDB = false, this.errorDBType}) : super(modelList: bookAuthorsList);
 
   /* --- CRUD OPERATIONS --- */
-  Future<void> getFromBook({required Book book}) async {
+  Future<void> getFromBook({required BookModel book}) async {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
 
     try {
@@ -26,7 +26,7 @@ class BookAuthorList extends ModelList<BookAuthor> {
     }
   }
 
-  Future<void> addToBook(Book book) async {
+  Future<void> addToBook(BookModel book) async {
     if (isNotEmpty) {
       for (final BookAuthor bookAuthor in this) {
         bookAuthor.bookId = book.bookId;

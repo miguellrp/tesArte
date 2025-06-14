@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tesArte/books/controllers/book_controller.dart';
+import 'package:tesArte/books/ui/ui_models/ui_book.dart';
+import 'package:tesArte/books/views/ui_widgets/form/book_author_selector.dart';
+import 'package:tesArte/books/views/ui_widgets/form/book_status_form_field.dart';
 import 'package:tesArte/common/components/form/tesarte_rating/tesarte_rating.dart';
 import 'package:tesArte/common/components/form/tesarte_save_button.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
@@ -6,25 +10,22 @@ import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/tesarte_validator.dart';
 import 'package:tesArte/data/tesarte_domain.dart';
-import 'package:tesArte/models/book/book.dart';
-import 'package:tesArte/views/your_books_view/components/form/book_author_selector.dart';
-import 'package:tesArte/views/your_books_view/components/form/book_status_form_field.dart';
+
 
 final double spacing = 20.0;
 
 class FormEditBook extends StatefulWidget {
-  final Book book;
+  final BookController controller;
   final ValueNotifier<bool> hasSavedChangesNotifier = ValueNotifier(false);
 
-  FormEditBook({super.key, required this.book});
-
-  final GlobalKey<_FormEditBookState> _formKey = GlobalKey<_FormEditBookState>();
+  FormEditBook({super.key, required this.controller});
 
   @override
   State<FormEditBook> createState() => _FormEditBookState();
 }
 
 class _FormEditBookState extends State<FormEditBook> {
+  BookController get activeController => widget.controller;
   bool formHasUnsavedChanges = false;
 
   int bookStatusValue = 0;
@@ -49,7 +50,7 @@ class _FormEditBookState extends State<FormEditBook> {
   void initState() {
     _initializeFormFields();
     _initializeWidgets();
-    bookStatusValue = widget.book.status ?? 0;
+    bookStatusValue = activeController.model.status ?? 0;
     super.initState();
   }
 
@@ -58,10 +59,10 @@ class _FormEditBookState extends State<FormEditBook> {
   }
 
   void _initializeFormFields() {
-    titleBookController.text = widget.book.title ?? "";
-    subtitleBookController.text = widget.book.subtitle ?? "";
-    descriptionBookController.text = widget.book.description ?? "";
-    publishedYearBookController.text = widget.book.publishedYear?.toString() ?? "";
+    titleBookController.text = activeController.model.title ?? "";
+    subtitleBookController.text = activeController.model.subtitle ?? "";
+    descriptionBookController.text = activeController.model.description ?? "";
+    publishedYearBookController.text = activeController.model.publishedYear?.toString() ?? "";
 
     titleFormField = TesArteTextFormField(
       labelText: "Título", // TODO: lang
@@ -78,14 +79,14 @@ class _FormEditBookState extends State<FormEditBook> {
     );
 
     bookStatusFormField = BookStatusFormField(
-      initialSelection: widget.book.status,
+      initialSelection: activeController.model.status,
       onChanged: (value) {
         bookStatusValue = value!;
         markFormWithChanges();
       }
     );
 
-    bookAuthorSelector = BookAuthorSelector(book: widget.book);
+    bookAuthorSelector = BookAuthorSelector(book: activeController.model);
 
     descriptionFormField = TesArteTextFormField(
       labelText: "Descripción", // TODO: lang
@@ -110,7 +111,7 @@ class _FormEditBookState extends State<FormEditBook> {
 
   void _initializeWidgets() {
     bookRating = TesArteRating(
-      rating: widget.book.rating,
+      rating: activeController.model.rating,
       onChange: () => markFormWithChanges()
     );
   }
@@ -121,19 +122,19 @@ class _FormEditBookState extends State<FormEditBook> {
       formHasChanges: formHasUnsavedChanges,
       onPressed: () async {
         if (formKey.currentState!.validate()) {
-          widget.book.title = titleBookController.text;
-          widget.book.subtitle = subtitleBookController.text;
-          widget.book.description = descriptionBookController.text;
-          widget.book.publishedYear = publishedYearBookController.text.isNotEmptyAndNotNull ? int.parse(publishedYearBookController.text) : null;
-          
-          widget.book.status = bookStatusValue;
-          widget.book.rating = bookRating.rating;
+          activeController.model.status = bookStatusValue;
+          activeController.model.rating = bookRating.rating;
+          activeController.model.title = titleBookController.text;
+          activeController.model.subtitle = subtitleBookController.text;
+          activeController.model.description = descriptionBookController.text;
+          activeController.model.publishedYear = publishedYearBookController.text.isNotEmptyAndNotNull ? int.parse(publishedYearBookController.text) : null;
+          await activeController.update();
 
-          await widget.book.update();
-
-          if (widget.book.errorDB) {
+          if (activeController.errorDB) {
             TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar gardar os cambios"); // TODO: lang
           } else {
+            // TODO: await bookAuthorSelector.updateAuthors();
+
             setState(() {
               widget.hasSavedChangesNotifier.value = true;
               formHasUnsavedChanges = false;
@@ -164,7 +165,10 @@ class _FormEditBookState extends State<FormEditBook> {
                 Column(
                   spacing: spacing / 2,
                   children: [
-                    widget.book.getCoverImage(),
+                    UIBook.getCoverImage(
+                      coverImagePath: activeController.model.coverImagePath,
+                      status: activeController.model.status
+                    ),
                     bookRating,
                   ]
                 ),
