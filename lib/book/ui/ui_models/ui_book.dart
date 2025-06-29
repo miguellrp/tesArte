@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesArte/app_config/router.dart';
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/views/ui_widgets/book_status_preview.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/controllers/book_author/book_author_list_controller.dart';
+import 'package:tesArte/book/views/ui_widgets/book_status_preview.dart';
 import 'package:tesArte/common/components/form/tesarte_rating/tesarte_rating.dart';
 import 'package:tesArte/common/components/generic/tesarte_card.dart';
 import 'package:tesArte/common/components/generic/tesarte_dialog.dart';
@@ -12,8 +13,7 @@ import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.da
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/common/utils/util_viewport.dart';
-import 'package:tesArte/models/author/book/book_author_list.dart';
-import 'package:tesArte/books/views/book_edit_view.dart';
+import 'package:tesArte/book/views/book_edit_view.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UIBook extends StatefulWidget {
@@ -51,6 +51,7 @@ class UIBook extends StatefulWidget {
 class _UIBookState extends State<UIBook> {
   BookController get activeController => widget.controller;
   bool verticalDirection = false;
+  BookAuthorListController? bookAuthorsList;
 
   List<Widget>? bookData;
 
@@ -62,16 +63,16 @@ class _UIBookState extends State<UIBook> {
     ) : BookPlaceholder(),
   );
 
-  @override
-  void initState() {
-    initializeBookData();
-
-    super.initState();
-  }
-
   void initializeBookData() async {
-    bookData ??= await _getDataBook(context);
-    setState(() {});
+    if (bookAuthorsList == null) {
+      bookAuthorsList = BookAuthorListController();
+      await bookAuthorsList!.getFromBook(activeController);
+    }
+
+    if (mounted) {
+      bookData = _getDataBook();
+      setState(() {});
+    }
   }
 
   @override
@@ -80,10 +81,8 @@ class _UIBookState extends State<UIBook> {
     super.didChangeDependencies();
   }
 
-  Future<List<Widget>> _getDataBook(BuildContext context) async {
+  List<Widget> _getDataBook() {
     List<Widget> dataBookWidgets = [];
-    final BookAuthorList bookAuthorsList = BookAuthorList();
-    await bookAuthorsList.getFromBook(book: activeController.model);
 
     if (navigatorKey.currentContext!.mounted) {
       dataBookWidgets = [
@@ -95,8 +94,8 @@ class _UIBookState extends State<UIBook> {
             color: Theme.of(context).colorScheme.secondary.withAlpha(170)
           )
         ),
-        if (bookAuthorsList.isNotEmpty) UtilText.getEllipsizedText(bookAuthorsList.getAllNames().join(" | "))
-        else UtilText.getEllipsizedText("Anónimo"), // TODO: lang
+        if (bookAuthorsList!.isNotEmpty) UtilText.getEllipsizedText(bookAuthorsList!.getAuthorNamesJoined())
+        else UtilText.getEllipsizedText("Autoría desconocida"), // TODO: lang
         UtilText.getEllipsizedText("[${activeController.model.publishedYear??"s.f."}]")
       ];
     }
@@ -207,6 +206,8 @@ class _UIBookState extends State<UIBook> {
 
   @override
   Container build(BuildContext context) {
+    initializeBookData();
+
     return Container(
       constraints: BoxConstraints(maxHeight: verticalDirection ? double.maxFinite : 223),
       child: TesArteCard(

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/dialogs/dialog_description_google_book.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/controllers/book_author/book_author_controller.dart';
+import 'package:tesArte/book/controllers/book_author/book_author_list_controller.dart';
+import 'package:tesArte/book/dialogs/book/dialog_description_google_book.dart';
+import 'package:tesArte/book/models/book/google_book.dart';
 import 'package:tesArte/common/components/generic/tesarte_toast.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
-import 'package:tesArte/models/author/author.dart';
-import 'package:tesArte/models/author/author_list.dart';
-import 'package:tesArte/models/author/book/book_author.dart';
-import 'package:tesArte/books/models/google_book.dart';
+import 'package:tesArte/models/model_list.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -27,7 +27,7 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
 
   @override
   void initState() {
-    authors = (widget.googleBook.authorsNames != null && widget.googleBook.authorsNames!.isNotEmpty) ? widget.googleBook.authorsNames!.join(" | ") : "Anónimo"; // TODO: lang
+    authors = (widget.googleBook.authorsNames != null && widget.googleBook.authorsNames!.isNotEmpty) ? widget.googleBook.authorsNames!.join(" | ") : "Autoría desconocida"; // TODO: lang
     super.initState();
   }
 
@@ -98,31 +98,19 @@ class _UIGoogleBookState extends State<UIGoogleBook> {
                   TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar engadir o libro ó teu estante"); // TODO: lang
                 }
               } else {
-                AuthorList authorsList = AuthorList();
-                bool errorOnCreateAuthorsProcess = false;
+                final BookAuthorListController bookAuthorsList = BookAuthorListController();
+                int bookAuthorsCreated = await bookAuthorsList.createAuthorsFromGoogleBook(widget.googleBook); // TODO: notify amount authors created
 
-                await authorsList.createAuthorsFromGoogleBook(widget.googleBook);
-                errorOnCreateAuthorsProcess = authorsList.errorDB;
-
-                if (!errorOnCreateAuthorsProcess) {
-                  for (Author author in authorsList) {
-                    BookAuthor bookAuthor = BookAuthor(
-                        bookId: selectedBook.model.bookId,
-                        authorId: author.authorId
-                    );
-
-                    await bookAuthor.addAuthorToBook();
-                    errorOnCreateAuthorsProcess = bookAuthor.errorDB;
-                  }
-                }
-
-                if (errorOnCreateAuthorsProcess) {
+                if (bookAuthorsList.errorDB) {
                   TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar crear a autoría deste libro"); // TODO: lang
                 } else {
+                  for (int bookAuthorIndex = 0; bookAuthorIndex < bookAuthorsList.length; bookAuthorIndex++) {
+                    await bookAuthorsList[bookAuthorIndex].addToBook(book: selectedBook);
+                  }
                   TesArteToast.showSuccessToast(message: "Engadiuse o libro ó teu estante"); // TODO: lang
                 }
 
-                if (mounted) Navigator.of(context).pop(!errorOnCreateAuthorsProcess);
+                if (mounted) Navigator.of(context).pop(!bookAuthorsList.errorDB);
               }
             }
           ),

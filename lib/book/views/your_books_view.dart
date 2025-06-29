@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/dialogs/dialog_preview_google_books.dart';
-import 'package:tesArte/books/models/book_model.dart';
-import 'package:tesArte/books/ui/ui_models/ui_book.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/dialogs/book/dialog_preview_google_books.dart';
+import 'package:tesArte/book/models/book/book_model.dart';
+import 'package:tesArte/book/ui/ui_models/ui_book.dart';
 import 'package:tesArte/common/components/generic/tesarte_divider.dart';
 import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
 import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/views/ui_widgets/form/form_edit_book.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/views/ui_widgets/form/form_edit_book.dart';
 import 'package:tesArte/common/layouts/basic_layout.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 

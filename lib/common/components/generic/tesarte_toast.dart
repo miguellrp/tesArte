@@ -8,8 +8,8 @@ enum TesArteToastType {
 }
 
 class TesArteToast {
-  static showErrorToast({BuildContext? context, required String message}) {
-    ScaffoldMessenger.of(context??navigatorKey.currentContext!).showSnackBar(SnackBar(
+  static showErrorToast({required String message}) {
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(SnackBar(
       backgroundColor: Colors.redAccent,
       content: Row(
         mainAxisSize: MainAxisSize.min,
@@ -22,8 +22,8 @@ class TesArteToast {
     ));
   }
 
-  static showSuccessToast({BuildContext? context, required String message}) {
-    ScaffoldMessenger.of(context??navigatorKey.currentContext!).showSnackBar(SnackBar(
+  static showSuccessToast({required String message}) {
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(SnackBar(
       backgroundColor: Colors.greenAccent.shade100,
       content: Row(
         mainAxisSize: MainAxisSize.min,
@@ -36,8 +36,8 @@ class TesArteToast {
     ));
   }
 
-  static showWarningToast({BuildContext? context, required String message}) {
-    ScaffoldMessenger.of(context??navigatorKey.currentContext!).showSnackBar(SnackBar(
+  static showWarningToast({required String message}) {
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(SnackBar(
       backgroundColor: Colors.orange.shade100,
       content: Row(
         mainAxisSize: MainAxisSize.min,

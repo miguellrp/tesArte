@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/ui/ui_models/ui_book.dart';
-import 'package:tesArte/books/views/ui_widgets/form/book_author_selector.dart';
-import 'package:tesArte/books/views/ui_widgets/form/book_status_form_field.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/ui/ui_models/ui_book.dart';
+import 'package:tesArte/book/views/ui_widgets/form/book_author_selector.dart';
+import 'package:tesArte/book/views/ui_widgets/form/book_status_form_field.dart';
 import 'package:tesArte/common/components/form/tesarte_rating/tesarte_rating.dart';
 import 'package:tesArte/common/components/form/tesarte_save_button.dart';
 import 'package:tesArte/common/components/form/tesarte_text_form_field.dart';
@@ -31,6 +31,8 @@ class _FormEditBookState extends State<FormEditBook> {
   int bookStatusValue = 0;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<BookAuthorSelectorState> bookAuthorSelectorKey = GlobalKey<BookAuthorSelectorState>();
+
   final TextEditingController titleBookController = TextEditingController();
   final TextEditingController subtitleBookController = TextEditingController();
   final TextEditingController descriptionBookController = TextEditingController();
@@ -42,16 +44,24 @@ class _FormEditBookState extends State<FormEditBook> {
   late final TesArteTextFormField descriptionFormField;
   late final TesArteTextFormField publishedYearFormField;
 
-  late final BookAuthorSelector bookAuthorSelector;
+  BookAuthorSelector? bookAuthorSelector;
 
   late final TesArteRating bookRating;
 
   @override
   void initState() {
     _initializeFormFields();
-    _initializeWidgets();
     bookStatusValue = activeController.model.status ?? 0;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    titleBookController.dispose();
+    subtitleBookController.dispose();
+    descriptionBookController.dispose();
+    publishedYearBookController.dispose();
+    super.dispose();
   }
 
   void markFormWithChanges() {
@@ -68,6 +78,7 @@ class _FormEditBookState extends State<FormEditBook> {
       labelText: "Título", // TODO: lang
       controller: titleBookController,
       maxWidth: 650,
+      maxLength: TesArteDomain.dTitle,
       onChange: (_) => markFormWithChanges(),
     );
 
@@ -75,6 +86,7 @@ class _FormEditBookState extends State<FormEditBook> {
       labelText: "Subtítulo", // TODO: lang
       controller: subtitleBookController,
       maxWidth: 650,
+      maxLength: TesArteDomain.dSubtitle,
       onChange: (_) => markFormWithChanges(),
     );
 
@@ -85,8 +97,6 @@ class _FormEditBookState extends State<FormEditBook> {
         markFormWithChanges();
       }
     );
-
-    bookAuthorSelector = BookAuthorSelector(book: activeController.model);
 
     descriptionFormField = TesArteTextFormField(
       labelText: "Descripción", // TODO: lang
@@ -107,9 +117,13 @@ class _FormEditBookState extends State<FormEditBook> {
         value: value
       ),
     );
-  }
 
-  void _initializeWidgets() {
+    bookAuthorSelector = BookAuthorSelector(
+      key: bookAuthorSelectorKey,
+      book: activeController,
+      onChange: () => markFormWithChanges()
+    );
+
     bookRating = TesArteRating(
       rating: activeController.model.rating,
       onChange: () => markFormWithChanges()
@@ -128,13 +142,12 @@ class _FormEditBookState extends State<FormEditBook> {
           activeController.model.subtitle = subtitleBookController.text;
           activeController.model.description = descriptionBookController.text;
           activeController.model.publishedYear = publishedYearBookController.text.isNotEmptyAndNotNull ? int.parse(publishedYearBookController.text) : null;
+          await activeController.updateBookAuthors(bookAuthorSelectorKey.currentState!.activeBookAuthors!);
           await activeController.update();
 
           if (activeController.errorDB) {
             TesArteToast.showErrorToast(message: "Ocurriu un erro ó intentar gardar os cambios"); // TODO: lang
           } else {
-            // TODO: await bookAuthorSelector.updateAuthors();
-
             setState(() {
               widget.hasSavedChangesNotifier.value = true;
               formHasUnsavedChanges = false;
@@ -147,50 +160,48 @@ class _FormEditBookState extends State<FormEditBook> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          spacing: spacing,
-          children: [
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: spacing,
-              runSpacing: spacing,
-              children: [
-                Column(
-                  spacing: spacing / 2,
-                  children: [
-                    UIBook.getCoverImage(
-                      coverImagePath: activeController.model.coverImagePath,
-                      status: activeController.model.status
-                    ),
-                    bookRating,
-                  ]
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 20,
-                  children: [
-                    titleFormField,
-                    subtitleFormField,
-                    bookStatusFormField
-                  ]
-                )
-              ],
-            ),
-            bookAuthorSelector,
-            publishedYearFormField,
-            descriptionFormField,
-            getSaveButton()
-          ]
-        ),
+  Form build(BuildContext context) => Form(
+    key: formKey,
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        spacing: spacing,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: spacing,
+            runSpacing: spacing,
+            children: [
+              Column(
+                spacing: spacing / 2,
+                children: [
+                  UIBook.getCoverImage(
+                    coverImagePath: activeController.model.coverImagePath,
+                    status: activeController.model.status
+                  ),
+                  bookRating,
+                ]
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  titleFormField,
+                  subtitleFormField,
+                  publishedYearFormField,
+                  bookStatusFormField
+                ]
+              )
+            ],
+          ),
+          bookAuthorSelector!,
+          descriptionFormField,
+          getSaveButton()
+        ]
       ),
-    );
-  }
+    ),
+  );
 }

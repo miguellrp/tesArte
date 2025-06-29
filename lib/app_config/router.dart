@@ -1,8 +1,8 @@
-import 'package:tesArte/books/controllers/book_controller.dart';
-import 'package:tesArte/books/models/book_model.dart';
+import 'package:tesArte/book/controllers/book/book_controller.dart';
+import 'package:tesArte/book/models/book/book_model.dart';
 import 'package:tesArte/views/book_authors_view/book_authors_view.dart';
-import 'package:tesArte/books/views/book_edit_view.dart';
-import 'package:tesArte/books/views/your_books_view.dart';
+import 'package:tesArte/book/views/book_edit_view.dart';
+import 'package:tesArte/book/views/your_books_view.dart';
 import 'package:tesArte/views/home_view/home_view.dart';
 import 'package:tesArte/views/welcome_view/welcome_view.dart';
 import 'package:flutter/material.dart';

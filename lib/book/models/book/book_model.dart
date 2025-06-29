@@ -1,4 +1,4 @@
-import 'package:tesArte/books/orms/book_orm.dart';
+import 'package:tesArte/book/orms/book/book_orm.dart';
 
 class BookModel {
   final BookORM _bookORM;

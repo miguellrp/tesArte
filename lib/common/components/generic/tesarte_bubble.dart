@@ -1,38 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:tesArte/common/components/generic/tesarte_icon_button.dart';
+import 'package:tesArte/common/utils/tesarte_extensions.dart';
 
 class TesArteBubble extends StatelessWidget {
   final String bubbleText;
   final Widget? bubbleLeading;
+  final VoidCallback? onPressed;
   final VoidCallback? onRemove;
 
-  const TesArteBubble({super.key, required this.bubbleText, this.bubbleLeading, this.onRemove});
+  const TesArteBubble({super.key, required this.bubbleText, this.bubbleLeading, this.onPressed, this.onRemove});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  InputChip build(BuildContext context) {
+    return InputChip(
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withAlpha(150),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Wrap(
-        direction: Axis.horizontal,
-        alignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 5,
-        runSpacing: 5,
-        children: [
-          if (bubbleLeading != null) bubbleLeading!,
-          Text(bubbleText, style: TextStyle(color: Theme.of(context).colorScheme.tertiary, fontSize: 13)),
-          if (onRemove != null) TesArteIconButton(
-            icon: Icon(Icons.close, size: 16),
-            withSquareShape: true,
-            onPressed: onRemove,
-            tooltipText: "Eliminar autoría",
-          )
-        ],
-      ),
+      avatar: bubbleLeading,
+      color: WidgetStatePropertyAll(Theme.of(context).colorScheme.surface.lighten(percent: .1)),
+      label: Text(bubbleText, style: TextStyle(color: Theme.of(context).colorScheme.tertiary, fontSize: 14)),
+      onPressed: onPressed,
+      onDeleted: onRemove
     );
   }
 }

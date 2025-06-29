@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
-import 'package:tesArte/books/utils/util_book.dart';
+import 'package:tesArte/book/utils/book/util_book.dart';
 
 class BookStatusPreview extends StatelessWidget {
   final int? status;

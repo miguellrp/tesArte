@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tesArte/books/ui/ui_models/ui_book.dart';
+import 'package:tesArte/book/ui/ui_models/ui_book.dart';
 import 'package:tesArte/common/placeholders/book_placeholder/book_placeholder_painter.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_mask_painter.dart';
 

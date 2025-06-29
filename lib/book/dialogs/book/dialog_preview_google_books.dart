@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tesArte/common/components/generic/tesarte_search_bar.dart';
 import 'package:tesArte/common/placeholders/tesarte_loader/tesarte_loader.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
-import 'package:tesArte/books/models/google_book.dart';
-import 'package:tesArte/books/ui/ui_models/ui_google_book.dart';
+import 'package:tesArte/book/models/book/google_book.dart';
+import 'package:tesArte/book/ui/ui_models/ui_google_book.dart';
 
 class _DialogPreviewGoogleBooksWidget extends StatefulWidget {
   const _DialogPreviewGoogleBooksWidget();
@@ -35,16 +35,17 @@ class _DialogPreviewGoogleBooksWidgetState extends State<_DialogPreviewGoogleBoo
             ),
             Expanded(
               child: _futureBooks == null
-                  ? const Center(child: Text("Introduce un término para buscar"))
+                  ? const Center(child: Text("Introduce un término para buscar")) // TODO: lang
                   : FutureBuilder<List<GoogleBook>>(
                 future: _futureBooks,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return TesArteLoader();
                   } else if (snapshot.hasError) {
+                    print(snapshot.error);
                     return Center(
                       child: Text(
-                        "Ocurriu un erro ó intentar procurar libros",
+                        "Ocurriu un erro ó intentar procurar libros", // TODO: lang
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                         ), // TODO: lang

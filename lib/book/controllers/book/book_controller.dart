@@ -1,7 +1,9 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:tesArte/books/books_db_filters.dart';
-import 'package:tesArte/books/models/book_model.dart';
-import 'package:tesArte/books/models/google_book.dart';
+import 'package:tesArte/book/books_db_filters.dart';
+import 'package:tesArte/book/controllers/book_author/book_author_controller.dart';
+import 'package:tesArte/book/controllers/book_author/book_author_list_controller.dart';
+import 'package:tesArte/book/models/book/book_model.dart';
+import 'package:tesArte/book/models/book/google_book.dart';
 import 'package:tesArte/common/utils/tesarte_extensions.dart';
 import 'package:tesArte/common/utils/util_text.dart';
 import 'package:tesArte/data/tesarte_db_helper.dart';
@@ -10,7 +12,8 @@ import 'package:tesArte/models/model_list.dart';
 import 'package:tesArte/models/tesarte_session/tesarte_session.dart';
 
 class BookController {
-  static final _tableName = "t_book";
+  static final tableName = "t_book";
+
   final BookModel _model;
   bool errorDB = false;
   String? errorDBType;
@@ -62,7 +65,7 @@ class BookController {
         whereArgs.addAll([termFiltered, termFiltered]);
       }
 
-      books = ModelList<BookController>(modelList: await tesArteDB.query(_tableName,
+      books = ModelList<BookController>(modelList: await tesArteDB.query(tableName,
           where: whereQuery,
           whereArgs: whereArgs,
           orderBy: "a_addition_date DESC"
@@ -82,7 +85,7 @@ class BookController {
     final Database tesArteDB = await TesArteDBHelper.openTesArteDatabase();
 
     try {
-      model.bookId = await tesArteDB.insert(_tableName,
+      model.bookId = await tesArteDB.insert(tableName,
         toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
@@ -104,11 +107,25 @@ class BookController {
     late int booksUpdated; // TODO: allow multiple updates [❓]
 
     try {
-      booksUpdated = await tesArteDB.update(_tableName,
+      booksUpdated = await tesArteDB.update(tableName,
           toMap(),
           where: "a_book_id = ?",
           whereArgs: [model.bookId]
       );
+    } catch (exception) {
+      errorDB = true;
+
+      if (errorDBType.isEmptyOrNull) errorDBType = exception.toString();
+    }
+  }
+
+  Future<void> updateBookAuthors(BookAuthorListController bookAuthors) async {
+    try {
+      await bookAuthors.deleteFromBook(book: this);
+
+      for (final BookAuthorController bookAuthor in bookAuthors) {
+        await bookAuthor.addToBook(book: this);
+      }
     } catch (exception) {
       errorDB = true;
 
@@ -121,7 +138,7 @@ class BookController {
     int booksDeleted = 0; // TODO: allow multiple deletes
 
     try {
-      booksDeleted = await tesArteDB.delete(_tableName,
+      booksDeleted = await tesArteDB.delete(tableName,
           where: "a_book_id = ?",
           whereArgs: [model.bookId]
       );
